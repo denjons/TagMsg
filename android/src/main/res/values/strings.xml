@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">TagMessenger</string>
+    <string name="title_activity_main_tm">MainTMActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_tm_splash">TmSplashActivity</string>
+    <string name="title_activity_splash_tm">SplashTMActivity</string>
+
+    <!-- menu -->
+    <string name="delete_tag">Delete tag</string>
+
+    <!-- splash -->
+    <string name="fetching_user">fetching user</string>
+    <string name="user_fetched">user fetched</string>
+
+    <!-- tags -->
+    <string name="new_tag_hint">Enter new tag</string>
+
+
+
+</resources>

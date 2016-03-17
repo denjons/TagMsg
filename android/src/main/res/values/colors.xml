@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="black_overlay">#66000000</color>
+
+    <!-- splash -->
+    <color name="splash_pink">#e6b6b0</color>
+    <color name="splash_green">#abdec9</color>
+    <color name="splash_text_color">#efefef</color>
+    <color name="splash_progress_text_color">#cecece</color>
+
+
+    <!-- tag -->
+    <color name="tag_list_background">#f9f9f9</color>
+    <color name="tag_list_selected_background">#929292</color>
+    <color name="tag_list_selected_text">#fafafa</color>
+
+    <color name="tag_text_color">#090909</color>
+
+
+
+</resources>

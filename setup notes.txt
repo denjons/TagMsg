@@ -1,0 +1,52 @@
+#1 create account openshift:
+email: dennis.j@live.se password: B0c136a##
+
+#2 install Ruby using RubyInstaller for windows
+needed to install ruby 2.1.8 for ssh to work.
+
+#3 install git, check windows command prompt as command line tool for git
+
+#4 gem install rhc - installs the rhc tool using ruby package manager
+
+#5 rhc setup
+(again, needed to install ruby 2.1.8 for this to work)
+
+#6 rhc create-domain dennisjonnson, need to create domain before starting
+
+#7 create application tm in eclipse:
+
+WildFly 8 administrator added.  Please make note of these credentials:
+
+   Username: adminwSv3Izy
+   Password: mKp94XrJXKWJ
+   
+   run 'rhc port-forward tm' to access the web admin area on port 9990.
+
+
+MySQL 5.5 database added.  Please make note of these credentials:
+
+       Root User: admin6xYadW5
+   Root Password: lqnPyDd6XkQz
+   Database Name: tm
+
+Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+
+You can manage your new MySQL database by also embedding phpmyadmin.
+The phpmyadmin username and password will be the same as the MySQL credentials above.
+
+#8 added PHP admin in openshift online console
+Please make note of these MySQL credentials again:
+  Root User: admin6xYadW5
+  Root Password: lqnPyDd6XkQz
+URL: https://tm-dennisjonsson.rhcloud.com/phpmyadmin/
+
+port forwarding:
+httpd: 	127.0.0.1:8081
+java:	127.0.0.1:3528
+java:	127.0.0.1:8082
+java:	http://127.0.0.1:9991/ admin console
+mysql:	127.0.0.1:3307
+
+
+application url:
+http://tm-dennisjonsson.rhcloud.com/
