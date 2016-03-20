@@ -5,9 +5,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.dennisjonsson.tm.client.NewUserDTO;
+import com.dennisjonsson.tm.client.RequestDTO;
 import com.dennisjonsson.tm.client.RequestListDTO;
 import com.dennisjonsson.tm.client.RequestUpdateDTO;
-import com.dennisjonsson.tm.client.RequetTransformer;
+import com.dennisjonsson.tm.client.RequestTransformer;
 import com.dennisjonsson.tm.client.TagsDTO;
 import com.dennisjonsson.tm.client.UserDTO;
 import com.dennisjonsson.tm.client.UserTagDTO;
@@ -18,6 +19,7 @@ import com.dennisjonsson.tm.rest.RestPostRequest;
 import com.dennisjonsson.tm.rest.RestResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 /**
@@ -55,7 +57,10 @@ public class TMService {
         SUCCESS_REMOVE_TAGS,
         FAILURE_REMOVE_TAGS,
         SUCCESS_GET_REQUESTS,
-        FAILURE_GET_REQUESTS
+        FAILURE_GET_REQUESTS,
+        SUCCESS_ADD_REQUEST,
+        FAILURE_ADD_REQUEST
+
 
     }
 
@@ -268,7 +273,7 @@ public class TMService {
                             RequestListDTO.class);
 
                     RequestManager requestManager = TMApplication.getRequestManager();
-                    ArrayList<Request> requests =  RequetTransformer.toRequestList(requestList);
+                    ArrayList<Request> requests =  RequestTransformer.toRequestList(requestList);
                     if(requestList.requests.size() < TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT){
                         requestManager.addRequests(requests);
                     }else{
@@ -319,16 +324,14 @@ public class TMService {
                 int code = response.getResponseCode();
 
                 if(code == 200){
-
                     RequestListDTO requestList = (RequestListDTO)gson.fromJson(
                             response.getBody(),
                             RequestListDTO.class);
 
                     RequestManager requestManager = TMApplication.getRequestManager();
-                    ArrayList<Request> requests =  RequetTransformer.toRequestList(requestList);
+                    ArrayList<Request> requests =  RequestTransformer.toRequestList(requestList);
                     response.result = requests;
                     requestManager.setRequests(requests);
-
                 }
 
                 return response;
@@ -349,6 +352,59 @@ public class TMService {
                 }
             }
         }.execute(updateDTO);
+    }
+
+    public void addRequest(User user, String content, ArrayList<String> tags){
+        // RequestDTO(String id, UserDTO user, String content, ArrayList<String> tags, String date)
+        // Request(String id, String user, String content, String date, ArrayList<String> tags)
+        final Request request = new Request(
+                UUID.randomUUID().toString(),
+                user.getId(),
+                content,
+                null,
+                tags);
+
+        final RequestDTO requestDTO = RequestTransformer.toRequestDTO(request);
+
+        new AsyncTask<RequestDTO, Void, RestResponse>(){
+
+            @Override
+            protected RestResponse doInBackground(RequestDTO... params) {
+                Gson gson = new Gson();
+
+                String json = gson.toJson(params[0]);
+
+                RestResponse response = new RestPostRequest()
+                        .Execute(TMAppConstants.REQUEST_SERVICE_ADD_REQUEST, json);
+
+                if(response.getResponseCode() == 200 ||
+                        response.getResponseCode() == 0){
+                    ArrayList<Request> requests = new ArrayList<Request>();
+                    requests.add(request);
+                    database.storeRequests(requests);
+                    response.result = request;
+
+                }
+
+                return response;
+            }
+
+            @Override
+            protected void onPostExecute(RestResponse restResponse) {
+
+                if(restResponse.getResponseCode() == 200 ||
+                        restResponse.getResponseCode() == 0){
+                    notifyListeners(Response.SUCCESS_ADD_REQUEST,
+                            "sucess",
+                            restResponse.result);
+                }else{
+                    notifyListeners(Response.FAILURE_ADD_REQUEST, "failure",  restResponse);
+                }
+
+
+
+            }
+        }.execute(requestDTO);
     }
 
 

@@ -16,6 +16,7 @@ public class TMAppConstants {
     public static final String USER_SERVICE_REMOVE_USER_TAGS = TM_URL + USER_SERVICE + "/removeusertags";
     public static final String REQUEST_SERVICE_GET_REQUESTS_FROM_TAGS = TM_URL + REQUEST_SERVICE + "/getRequestsFromTags";
     public static final String REQUEST_SERVICE_GET_ELIGIBLE_REQUESTS = TM_URL + REQUEST_SERVICE + "/getEligibleRequestsForUser";
+    public static final String REQUEST_SERVICE_ADD_REQUEST = TM_URL + REQUEST_SERVICE + "/addRequest";
 
     // URL connection
     public static final int SOCKET_TIME_OUT = 5000;

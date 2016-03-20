@@ -1,6 +1,7 @@
 package com.dennisjonsson.tm.activity;
 
-import android.net.Uri;
+import android.content.Intent;
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,21 +12,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
+import android.widget.TextView;
 
 import com.dennisjonsson.tagmessenger.R;
-import com.dennisjonsson.tm.application.TMService;
 import com.dennisjonsson.tm.model.Request;
 
-import java.util.ArrayList;
-
 public class MainTMActivity extends AppCompatActivity implements
-        RequestListFragment.OnListFragmentInteractionListener,
-        TagListFragment.OnListFragmentInteractionListener,
-        TMService.Listener{
+        RequestInboxListFragment.OnListFragmentInteractionListener,
+        TagListFragment.OnListFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -41,16 +41,11 @@ public class MainTMActivity extends AppCompatActivity implements
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private MenuItem tagListDeleteMenuItem;
-
-    private ArrayList<TagListViewAdapter.ViewHolder> selectedTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tm);
-
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,16 +57,22 @@ public class MainTMActivity extends AppCompatActivity implements
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent i = new Intent(MainTMActivity.this, RequestCreateActivity.class);
+                startActivity(i);
+                /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                        */
+
             }
         });
-
 
     }
 
@@ -80,8 +81,6 @@ public class MainTMActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_tm, menu);
-        menu.setGroupVisible(R.id.menu_group_tag_list, false);
-        tagListDeleteMenuItem = menu.findItem(R.id.menu_tag_delete);
         return true;
     }
 
@@ -92,57 +91,16 @@ public class MainTMActivity extends AppCompatActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.menu_tag_delete){
-            ArrayList<String> tags = new ArrayList<>();
-
-            for(TagListViewAdapter.ViewHolder holder : selectedTags){
-                tags.add(holder.tag);
-                holder.deselect(this);
-            }
-            selectedTags.clear();
-
-            //User user = TMApplication.getTMService(this).getLocalUser();
-            //TMApplication.getTMService(this).deleteTags(tags, user);
-
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
-    public void onListFragmentInteraction(Object item,
-                                          TagListFragment.InteractionEvent eventType) {
-        /*
-        if(eventType == TagListFragment.InteractionEvent.ADD_TAG){
-            //TODO DO SOMETHING
-        }else if(eventType == TagListFragment.InteractionEvent.TAG_SELECTED){
-            tagListDeleteMenuItem.setVisible(true);
-            selectedTags = (ArrayList<TagListViewAdapter.ViewHolder>)item;
-            //TODO DO SOMETHING
-        }else if(eventType == TagListFragment.InteractionEvent.TAG_DESELECTED){
-            selectedTags = (ArrayList<TagListViewAdapter.ViewHolder>)item;
-            if(selectedTags.size() < 1){
-                tagListDeleteMenuItem.setVisible(false);
-            }
-            //TODO DO SOMETHING
-        }
-*/
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onFinish(TMService.Response response, String message, Object result) {
+    public void onListFragmentInteraction(Object item, TagListFragment.InteractionEvent eventType) {
 
     }
 
@@ -163,19 +121,15 @@ public class MainTMActivity extends AppCompatActivity implements
 
         @Override
         public Fragment getItem(int position) {
-
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if(position == 0) {
-                // argument is the number of columns, > 1 will result in a gridLayout.
+
+            if(position == 0){
                 return TagListFragment.newInstance(1);
+            }else if(position == 1){
+                return RequestInboxListFragment.newInstance(1);
             }
-            if(position == 1) {
-                return RequestListFragment.newInstance(1);
-            }
-
-            return RequestListFragment.newInstance(1);
-
+            return TagListFragment.newInstance(1);
         }
 
         @Override
@@ -197,6 +151,4 @@ public class MainTMActivity extends AppCompatActivity implements
             return null;
         }
     }
-
-
 }

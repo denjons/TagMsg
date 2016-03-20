@@ -19,6 +19,8 @@
 
     <color name="tag_text_color">#090909</color>
 
+    <color name="tranparent">#00000000</color>
+
 
 
 </resources>

@@ -20,6 +20,14 @@
     <!-- tags -->
     <string name="new_tag_hint">Enter new tag</string>
 
+    <!-- requests -->
+    <string name="no_requests">no requests</string>
+    <string name="reply">reply</string>
+    <string name="title_activity_request_view">RequestViewActivity</string>
+    <string name="title_activity_request_create">RequestCreateActivity</string>
+    <string name="enter_request">Enter request</string>
+
+    <string name="send">send</string>
 
 
 </resources>

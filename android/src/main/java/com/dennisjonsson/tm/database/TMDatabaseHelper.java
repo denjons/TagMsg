@@ -29,7 +29,8 @@ public class TMDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REQUESTS_ID = "id";
     public static final String COLUMN_REQUESTS_USER = "user";
     public static final String COLUMN_REQUESTS_CONTENT = "content";
-    public static final String COLUMN_REQUESTS_DATE = "date";
+    public static final String COLUMN_REQUESTS_TAGS = "date";
+    public static final String COLUMN_REQUESTS_DATE = "tags";
 
     private Context context;
 
@@ -52,7 +53,15 @@ public class TMDatabaseHelper extends SQLiteOpenHelper {
                         + COLUMN_TAGS_DATE + " timestamp default current_timestamp); "
         );
 
-      //  db.execSQL("create table if not exists ");
+        //db.execSQL("drop table "+TABLE_REQUESTS);
+
+       db.execSQL("create table if not exists "+TABLE_REQUESTS+" (" +
+               COLUMN_REQUESTS_ID + " VARCHAR(40)," +
+               COLUMN_REQUESTS_USER + " VARCHAR(40)," +
+               COLUMN_REQUESTS_CONTENT + " TEXT," +
+               COLUMN_REQUESTS_DATE + "date timestamp default current_timestamp," +
+               COLUMN_REQUESTS_TAGS + " TEXT," +
+               "PRIMARY KEY(id))");
 
 
     }

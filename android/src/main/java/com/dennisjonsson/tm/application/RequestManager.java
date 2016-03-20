@@ -1,5 +1,7 @@
 package com.dennisjonsson.tm.application;
 
+import android.util.Log;
+
 import com.dennisjonsson.tm.model.Request;
 
 import java.util.ArrayList;
@@ -9,7 +11,9 @@ import java.util.ArrayList;
  */
 public class RequestManager {
 
-    private final ArrayList<Request> requests;
+    public final String LOG_TAG = "RequestManager";
+
+    public final ArrayList<Request> requests;
 
     RequestManager() {
         requests = new ArrayList<>();
@@ -18,15 +22,13 @@ public class RequestManager {
     public void setRequests(ArrayList<Request> requests){
         this.requests.clear();
         this.requests.addAll(requests);
+        Log.d(LOG_TAG, "current size of requests is "+requests.size());
     }
 
     public void addRequests(ArrayList<Request> requests){
         this.requests.addAll(requests);
     }
 
-    public ArrayList<Request> getRequests(){
-        return requests;
-    }
 
 
 }

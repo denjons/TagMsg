@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -171,7 +172,7 @@ public class TagListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final Button mAddBtnView;
+        public final ImageButton mAddBtnView;
         public final EditText mTextView;
         public final LinearLayout progressBarContainer;
         public String tag;
@@ -179,7 +180,7 @@ public class TagListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public HeaderViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            mAddBtnView = (Button)itemView.findViewById(R.id.tag_add_button);
+            mAddBtnView = (ImageButton)itemView.findViewById(R.id.tag_add_button);
             mTextView = (EditText)itemView.findViewById(R.id.tag_add_text);
             progressBarContainer = (LinearLayout)itemView.findViewById(R.id.tag_progressbar_container);
         }

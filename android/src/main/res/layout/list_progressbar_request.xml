@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:id="@+id/request_list_progressbar_container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:layout_gravity="center">
     <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/request_list_progressbar_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         android:gravity="center">
-        <ProgressBar
-            android:id="@+id/request_list_progressbar"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+            <ProgressBar
+                android:id="@+id/request_list_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+        </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/request_empty_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/requests_empty_list_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_requests"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+</RelativeLayout>
