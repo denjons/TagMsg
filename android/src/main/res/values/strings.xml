@@ -10,6 +10,11 @@
     <string name="title_activity_tm_splash">TmSplashActivity</string>
     <string name="title_activity_splash_tm">SplashTMActivity</string>
 
+    <!-- main menu sections -->
+    <string name="section_filter">Filter</string>
+    <string name="section_inbox">Inbox</string>
+    <string name="section_outbox">Outbox</string>
+
     <!-- menu -->
     <string name="delete_tag">Delete tag</string>
 
@@ -19,6 +24,7 @@
 
     <!-- tags -->
     <string name="new_tag_hint">Enter new tag</string>
+    <string name="tags_field_label">Tags:</string>
 
     <!-- requests -->
     <string name="no_requests">no requests</string>

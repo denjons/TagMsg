@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.dennisjonsson.tm.model.Request;
 import com.dennisjonsson.tm.model.User;
@@ -16,6 +17,8 @@ import java.util.Arrays;
  * Created by dennis on 2016-03-08.
  */
 public class DataSource {
+
+    private static final String LOG_TAG = "DataSource";
 
     private TMDatabaseHelper dbHelper;
 
@@ -114,7 +117,9 @@ public class DataSource {
     }
 
     public void storeRequests(ArrayList<Request> requests){
+
         for(Request request : requests){
+            Log.d(LOG_TAG, "storing: "+ request.toString());
             dbHelper.getWritableDatabase().insert(
                     dbHelper.TABLE_REQUESTS,
                     null,
@@ -133,19 +138,24 @@ public class DataSource {
     }
 
     private ArrayList<Request> getRequestsFromCursor(Cursor cursor){
+
         ArrayList<Request> requests = new ArrayList<>();
+        if(!cursor.moveToFirst()){
+            return requests;
+        }
         while(cursor.moveToNext()){
             // Request(String id, String user, String content, String date, ArrayList<String> tags)
             Request request = new Request(
                     cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_ID)),
                     cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_USER)),
-                    cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_CONTENT)),
-                    cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_DATE)),
+                   cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_CONTENT)),
+                   ""/*cursor.getString(cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_DATE))*/,
                     fromStringToTags(
                             cursor.getString(
                                     cursor.getColumnIndex(TMDatabaseHelper.COLUMN_REQUESTS_TAGS)))
             );
-
+            Log.d(LOG_TAG, "gettig: "+request.toString());
+            requests.add(request);
         }
         cursor.close();
 
@@ -153,9 +163,12 @@ public class DataSource {
     }
 
 
-    public ArrayList<Request> getRequests(){
+    public ArrayList<Request> getRequests(int limit, int offset){
         Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from "+
-                TMDatabaseHelper.TABLE_REQUESTS, null);
+                TMDatabaseHelper.TABLE_REQUESTS
+                + " limit "+limit
+                + " offset "+offset
+                , null);
         return getRequestsFromCursor(cursor);
     }
 

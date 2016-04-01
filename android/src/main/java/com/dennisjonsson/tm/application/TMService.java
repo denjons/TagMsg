@@ -59,7 +59,9 @@ public class TMService {
         SUCCESS_GET_REQUESTS,
         FAILURE_GET_REQUESTS,
         SUCCESS_ADD_REQUEST,
-        FAILURE_ADD_REQUEST
+        FAILURE_ADD_REQUEST,
+        SUCCESS_GET_OUTBOX,
+        FAILURE_GET_OUTBOX
 
 
     }
@@ -274,10 +276,11 @@ public class TMService {
 
                     RequestManager requestManager = TMApplication.getRequestManager();
                     ArrayList<Request> requests =  RequestTransformer.toRequestList(requestList);
+
                     if(requestList.requests.size() < TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT){
-                        requestManager.addRequests(requests);
+                        requestManager.addToInbox(requests);
                     }else{
-                        requestManager.setRequests(requests);
+                        requestManager.setInbox(requests);
                     }
                 }
 
@@ -331,7 +334,7 @@ public class TMService {
                     RequestManager requestManager = TMApplication.getRequestManager();
                     ArrayList<Request> requests =  RequestTransformer.toRequestList(requestList);
                     response.result = requests;
-                    requestManager.setRequests(requests);
+                    requestManager.setInbox(requests);
                 }
 
                 return response;
@@ -378,7 +381,7 @@ public class TMService {
                         .Execute(TMAppConstants.REQUEST_SERVICE_ADD_REQUEST, json);
 
                 if(response.getResponseCode() == 200 ||
-                        response.getResponseCode() == 0){
+                        response.error == RestResponse.Error.ERROR_GET_INPUT_STREAM){
                     ArrayList<Request> requests = new ArrayList<Request>();
                     requests.add(request);
                     database.storeRequests(requests);
@@ -393,7 +396,7 @@ public class TMService {
             protected void onPostExecute(RestResponse restResponse) {
 
                 if(restResponse.getResponseCode() == 200 ||
-                        restResponse.getResponseCode() == 0){
+                        restResponse.error == RestResponse.Error.ERROR_GET_INPUT_STREAM){
                     notifyListeners(Response.SUCCESS_ADD_REQUEST,
                             "sucess",
                             restResponse.result);
@@ -407,6 +410,33 @@ public class TMService {
         }.execute(requestDTO);
     }
 
+
+    public void getOutbox(User user, int offset){
+
+        new AsyncTask<Integer, Integer, ArrayList<Request>>(){
+
+            @Override
+            protected ArrayList<Request> doInBackground(Integer... params) {
+                ArrayList<Request> requests = database.getRequests(TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT, 0);
+                RequestManager requestManager = TMApplication.getRequestManager();
+                requestManager.setOutbox(requests);
+                return requests;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Request> requests) {
+                if(requests != null){
+                    notifyListeners(Response.SUCCESS_GET_OUTBOX,
+                            "success getting outbox", requests);
+                }else{
+                    notifyListeners(Response.FAILURE_GET_OUTBOX,
+                            "failure getting outbox", requests);
+                }
+
+            }
+
+        }.execute(offset);
+    }
 
 
      /*

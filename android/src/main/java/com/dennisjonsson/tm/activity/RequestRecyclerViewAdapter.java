@@ -1,12 +1,14 @@
 package com.dennisjonsson.tm.activity;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.dennisjonsson.tagmessenger.R;
-import com.dennisjonsson.tm.activity.RequestListFragment.OnListFragmentInteractionListener;
+import com.dennisjonsson.tm.activity.OnRequestFragmentInteractionListener;
 
 import com.dennisjonsson.tm.model.Request;
 
@@ -15,73 +17,106 @@ import java.util.List;
 
 /**
 
- * specified {@link OnListFragmentInteractionListener}.
+ *
  * TODO: Replace the implementation with code for your data type.
  */
-public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.ViewHolder> {
+public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    public static final String LOG_TAG = "RequestInboxAdapter";
 
     private final List<Request> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnRequestFragmentInteractionListener mListener;
 
     private static final int ITEM_TYPE_LOAD = 0;
-    private static final int ITEM_TYPE_REQUEST = 0;
+    private static final int ITEM_TYPE_REQUEST = 1;
 
-    public RequestRecyclerViewAdapter(List<Request> items, OnListFragmentInteractionListener listener) {
+    public RequestRecyclerViewAdapter(List<Request> items, OnRequestFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = null;
-        if(viewType == ITEM_TYPE_REQUEST){
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_request, parent, false);
-        }else if(viewType == ITEM_TYPE_LOAD){
+        if(viewType == ITEM_TYPE_LOAD){
+            Log.d(LOG_TAG, "creating emptyViewHolder");
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_progressbar_request, parent, false);
+            return new EmptyViewHolder(view);
+
+        }else if(viewType == ITEM_TYPE_REQUEST){
+            Log.d(LOG_TAG, "creating requestViewHolder");
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_request, parent, false);
         }
 
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
 
 
-        Request request = mValues.get(position - 1);
-        holder.mContent.setText(request.content);
-        // TODO get tags in a nocer way
-        holder.mTags.setText(Arrays.deepToString(request.tags.toArray()));
-        holder.mDate.setText(request.date);
-        holder.request = request;
+        if(holder instanceof ViewHolder){
+            final ViewHolder viewHolder = (ViewHolder)holder;
+            Request request = mValues.get(position);
+           // Log.d(LOG_TAG, "Binding log tag with content: "+ request.content);
+            viewHolder.mContent.setText(request.content);
+            // TODO get tags in a nicer way
+            viewHolder.mTags.setText(Arrays.deepToString(request.tags.toArray()));
+            viewHolder.mDate.setText(request.date.split(" ")[0]);
+            viewHolder.request = request;
 
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.request);
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction(viewHolder.request);
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     @Override
     public int getItemViewType(int position) {
 
-        if(getItemCount() == 1 && position == 0 ){
+        if(this.mValues.size() == 0 && position == 0 ){
             return ITEM_TYPE_LOAD;
         }
         return ITEM_TYPE_REQUEST;
     }
 
+    /*
+    *   return list size if list contains element or
+    * */
     @Override
     public int getItemCount() {
-        return mValues.size() + 1;
+        //Log.d(LOG_TAG, "current size of values is "+mValues.size());
+        if(mValues.size() == 0){
+            return 1;
+        }
+        return mValues.size();
+
+    }
+
+    public class EmptyViewHolder extends RecyclerView.ViewHolder{
+
+        public final View mView;
+        public final View mProgressBar;
+        public final View mEmptList;
+        public EmptyViewHolder(View view) {
+            super(view);
+            mView = view;
+            mProgressBar = (LinearLayout)view.findViewById(R.id.request_empty_list_container);
+            mEmptList = (LinearLayout)view.findViewById(R.id.request_list_progressbar_container);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

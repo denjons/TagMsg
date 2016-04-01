@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black_overlay">#66000000</color>
+    <color name="header">#6E6E6E</color>
 
     <!-- splash -->
     <color name="splash_pink">#e6b6b0</color>
@@ -16,11 +17,22 @@
     <color name="tag_list_background">#f9f9f9</color>
     <color name="tag_list_selected_background">#929292</color>
     <color name="tag_list_selected_text">#fafafa</color>
-
     <color name="tag_text_color">#090909</color>
-
     <color name="tranparent">#00000000</color>
 
+    <color name="d_white">#f9f9f9</color>
+    <color name="white">#ffffff</color>
+
+    <!-- b-colors -->
+    <color name="d_grey">#444</color>
+    <color name="l_grey">#d4d3d0</color>
+
+    <color name="l_blue">#b6cdd6</color>
+    <color name="l_red">#ff9a97</color>
+    <color name="l_green">#9eceb4</color>
+    <color name="l_green_2">#96e6bd</color>
+    <color name="l_brown">#f6e2c5</color>
+    <color name="l_purple">#c57288</color>
 
 
 </resources>

@@ -9,14 +9,14 @@
         android:id="@+id/request_lit_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/tag_element_text"
+        style="@style/request_list_item.content"
         />
 
     <TextView
         android:id="@+id/request_list_item_tags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        style="@style/request_list_item.tags"
          />
 
     <TextView
@@ -24,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        style="@style/request_list_item.date"
         />
 
 

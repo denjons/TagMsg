@@ -5,7 +5,7 @@ package com.dennisjonsson.tm.rest;
  */
 public class RestResponse {
 
-    enum Error{
+    public enum Error{
         ERROR_CONNECTION_TIMEOUT,
         ERROR_GET_INPUT_STREAM,
         ERROR_MALFORMED_REQUEST,

@@ -36,17 +36,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name="com.dennisjonsson.tm.activity.RequestViewActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_request_view"
-            android:parentActivityName="com.dennisjonsson.tm.activity.MainTMActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dennisjonsson.tm.activity.MainTMActivity" />
-        </activity>
-
-        <activity
             android:name="com.dennisjonsson.tm.activity.RequestCreateActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_request_create"

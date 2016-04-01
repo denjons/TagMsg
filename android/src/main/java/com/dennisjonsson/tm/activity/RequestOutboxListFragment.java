@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennisjonsson.tagmessenger.R;
-import com.dennisjonsson.tm.application.TMAppConstants;
 import com.dennisjonsson.tm.application.TMApplication;
 import com.dennisjonsson.tm.application.TMService;
 import com.dennisjonsson.tm.model.Request;
@@ -22,34 +21,35 @@ import java.util.ArrayList;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ *
  * interface.
  */
-public class RequestListFragment extends Fragment implements TMService.Listener {
+public class RequestOutboxListFragment extends Fragment implements TMService.Listener {
 
-    private static final String LOG_TAG = "RequestListFragment";
+    private static final String LOG_TAG = "RequestOutbox";
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnRequestFragmentInteractionListener mListener;
     private RecyclerView recyclerView;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
+     * Mandatory empty construcstor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RequestListFragment() {
+    public RequestOutboxListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static RequestListFragment newInstance(int columnCount) {
-        RequestListFragment fragment = new RequestListFragment();
+    public static RequestOutboxListFragment newInstance(int columnCount) {
+        RequestOutboxListFragment fragment = new RequestOutboxListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -65,7 +65,7 @@ public class RequestListFragment extends Fragment implements TMService.Listener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_request_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_request_outbox_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -77,7 +77,7 @@ public class RequestListFragment extends Fragment implements TMService.Listener 
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new RequestRecyclerViewAdapter(TMApplication.getRequestManager().getRequests(), mListener));
+            recyclerView.setAdapter(new RequestRecyclerViewAdapter(TMApplication.getRequestManager().outbox, mListener));
         }
         return view;
     }
@@ -86,8 +86,8 @@ public class RequestListFragment extends Fragment implements TMService.Listener 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnRequestFragmentInteractionListener) {
+            mListener = (OnRequestFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -118,20 +118,19 @@ public class RequestListFragment extends Fragment implements TMService.Listener 
 
         TMService service = TMApplication.getTMService(getActivity());
         service.addListener(this);
-
-        service.getEligibleRequests(
-                service.getLocalUser(),
-                TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT,
-                0);
+        service.getOutbox(service.getLocalUser(),0);
 
     }
 
     @Override
     public void onFinish(TMService.Response response, String message, Object result) {
-         if(response == TMService.Response.SUCCESS_GET_REQUESTS){
-             Log.d(LOG_TAG, "got requests from server");
-             recyclerView.getAdapter().notifyDataSetChanged();
-         }
+
+        if(response == TMService.Response.SUCCESS_GET_OUTBOX){
+            ArrayList<Request> list = (ArrayList<Request>)result;
+            Log.d(LOG_TAG, "got outbox from database "+list.size());
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+
     }
 
     /**
@@ -144,8 +143,5 @@ public class RequestListFragment extends Fragment implements TMService.Listener 
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Request item);
-    }
+
 }

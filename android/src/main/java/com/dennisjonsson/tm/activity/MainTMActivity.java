@@ -24,7 +24,7 @@ import com.dennisjonsson.tagmessenger.R;
 import com.dennisjonsson.tm.model.Request;
 
 public class MainTMActivity extends AppCompatActivity implements
-        RequestInboxListFragment.OnListFragmentInteractionListener,
+        OnRequestFragmentInteractionListener,
         TagListFragment.OnListFragmentInteractionListener{
 
     /**
@@ -56,6 +56,7 @@ public class MainTMActivity extends AppCompatActivity implements
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -128,6 +129,8 @@ public class MainTMActivity extends AppCompatActivity implements
                 return TagListFragment.newInstance(1);
             }else if(position == 1){
                 return RequestInboxListFragment.newInstance(1);
+            }else if(position == 2){
+                return RequestOutboxListFragment.newInstance(1);
             }
             return TagListFragment.newInstance(1);
         }
@@ -135,18 +138,18 @@ public class MainTMActivity extends AppCompatActivity implements
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 2;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return getResources().getString(R.string.section_filter);
                 case 1:
-                    return "SECTION 2";
+                    return getResources().getString(R.string.section_inbox);
                 case 2:
-                    return "SECTION 3";
+                    return getResources().getString(R.string.section_outbox);
             }
             return null;
         }

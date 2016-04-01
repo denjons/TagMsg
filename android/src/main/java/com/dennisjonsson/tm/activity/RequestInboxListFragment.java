@@ -15,12 +15,11 @@ import com.dennisjonsson.tagmessenger.R;
 import com.dennisjonsson.tm.application.TMAppConstants;
 import com.dennisjonsson.tm.application.TMApplication;
 import com.dennisjonsson.tm.application.TMService;
-import com.dennisjonsson.tm.model.Request;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ *
  * interface.
  */
 public class RequestInboxListFragment extends Fragment implements TMService.Listener {
@@ -31,7 +30,7 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnRequestFragmentInteractionListener mListener;
     private RecyclerView recyclerView;
 
     /**
@@ -75,7 +74,7 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new RequestInboxRecyclerViewAdapter(TMApplication.getRequestManager().requests, mListener));
+            recyclerView.setAdapter(new RequestRecyclerViewAdapter(TMApplication.getRequestManager().inbox, mListener));
         }
         return view;
     }
@@ -84,8 +83,8 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnRequestFragmentInteractionListener) {
+            mListener = (OnRequestFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -116,7 +115,6 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
 
         TMService service = TMApplication.getTMService(getActivity());
         service.addListener(this);
-
         service.getEligibleRequests(
                 service.getLocalUser(),
                 TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT,
@@ -130,6 +128,14 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
          if(response == TMService.Response.SUCCESS_GET_REQUESTS){
              Log.d(LOG_TAG, "got requests from server");
              recyclerView.getAdapter().notifyDataSetChanged();
+         }else if(response == TMService.Response.FAILURE_GET_REQUESTS){
+             // todo notify user
+         }else if(response == TMService.Response.SUCCESS_ADD_TAGS){
+             TMService service = TMApplication.getTMService(getActivity());
+             service.getEligibleRequests(
+                     service.getLocalUser(),
+                     TMAppConstants.REQUEST_UPADTE_REQUESTS_LIMIT,
+                     0);
          }
 
     }
@@ -144,8 +150,5 @@ public class RequestInboxListFragment extends Fragment implements TMService.List
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Request item);
-    }
+
 }

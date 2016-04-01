@@ -31,6 +31,24 @@ begin
 end //
 DELIMITER ;
 
+
+DELIMITER //
+create function userHasTags(userId VARCHAR(40)) returns int
+begin
+	declare k int;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user;
+	if k > 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end //
+DELIMITER ;
+
+
+
+
 /*
 		 ************************ tags *************************
 */

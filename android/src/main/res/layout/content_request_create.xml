@@ -17,27 +17,38 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/request_create_test_tags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            />
+
         <LinearLayout
             android:id="@+id/request_create_tags_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:imeOptions="actionGo"
-                android:id="@+id/_request_create_add_tag_text"
+            android:orientation="horizontal">
+            <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/tags_field_label"
+                android:layout_marginRight="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/new_tag_hint"
-                android:background="#00000000"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                />
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/request_create_test_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                    android:visibility="gone"
+                    />
+                <EditText
+                    android:id="@+id/_request_create_add_tag_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                    />
+            </LinearLayout>
+
 
         </LinearLayout>
         <EditText

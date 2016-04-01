@@ -216,7 +216,6 @@ begin
 end //
 DELIMITER ;
 
-
 /*
 		get all requests a user is eligible for
 */
@@ -226,14 +225,18 @@ begin
 	if(userExists(userId) = -1) then 
 		signal sqlstate '20001';
 	end if;
-    select table1.request as id, getRequests.user, getRequests.content, getRequests.tags as tags , getRequests.date from
-    (select request from eligibleForUser where eligibleForUser.user = userId ) as table1
-    join 
-    getRequests 
-    on 
-    getRequests.id = table1.request AND NOT getRequests.user = userId
-    ORDER BY getRequests.date DESC
-    LIMIT requestLimit offset requestOffset;
+    if(userHasTags(userId) = -1) then
+		select * from getRequests order by date DESC limit requestLimit offset requestOffset;
+    else
+		select table1.request as id, getRequests.user, getRequests.content, getRequests.tags as tags , getRequests.date from
+		(select request from eligibleForUser where eligibleForUser.user = userId ) as table1
+		join 
+		getRequests 
+		on 
+		getRequests.id = table1.request AND NOT getRequests.user = userId
+		ORDER BY getRequests.date DESC
+		LIMIT requestLimit offset requestOffset;
+    end if;
 end //
 DELIMITER ;
 

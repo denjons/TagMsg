@@ -3,7 +3,6 @@ package com.dennisjonsson.tm.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,13 +11,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.dennisjonsson.tagmessenger.R;
 import com.dennisjonsson.tm.application.TMApplication;
 import com.dennisjonsson.tm.application.TMService;
-import com.dennisjonsson.tm.model.User;
 
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
  */
 public class TagListFragment extends Fragment implements
         TMService.Listener,
-        TagListViewAdapter.AdapterInteractionListener,
+        TagRecyclerViewAdapter.AdapterInteractionListener,
         PopupMenu.OnMenuItemClickListener {
 
     public static final String LOG_TAG = "TagListFragment";
@@ -43,8 +40,8 @@ public class TagListFragment extends Fragment implements
     private OnListFragmentInteractionListener mListener;
     private RecyclerView recyclerView;
 
-    private TagListViewAdapter.HeaderViewHolder headerViewHolder;
-    private TagListViewAdapter.ViewHolder selectedHolder;
+    private TagRecyclerViewAdapter.HeaderViewHolder headerViewHolder;
+    private TagRecyclerViewAdapter.ViewHolder selectedHolder;
 
 
     private ArrayList<String> tags;
@@ -96,7 +93,7 @@ public class TagListFragment extends Fragment implements
             tags = new ArrayList<String>();
             tags.add("japanese");
             tags.add("swedish");
-            recyclerView.setAdapter(new TagListViewAdapter(tags, this));
+            recyclerView.setAdapter(new TagRecyclerViewAdapter(tags, this));
         }
 
 
@@ -184,7 +181,7 @@ public class TagListFragment extends Fragment implements
     }
 
     @Override
-    public void onSelectTag(TagListViewAdapter.ViewHolder viewHolder){
+    public void onSelectTag(TagRecyclerViewAdapter.ViewHolder viewHolder){
         selectedHolder = viewHolder;
         selectedHolder.select(getActivity());
         PopupMenu popupMenu = new PopupMenu(getActivity(), viewHolder.mView);
@@ -201,7 +198,7 @@ public class TagListFragment extends Fragment implements
     }
 
     @Override
-    public void onDeselectTag(TagListViewAdapter.ViewHolder viewHolder) {
+    public void onDeselectTag(TagRecyclerViewAdapter.ViewHolder viewHolder) {
 
 
         viewHolder.deselect(getActivity());
@@ -214,7 +211,7 @@ public class TagListFragment extends Fragment implements
     }
 
     @Override
-    public void onSetHeader(TagListViewAdapter.HeaderViewHolder viewHolder) {
+    public void onSetHeader(TagRecyclerViewAdapter.HeaderViewHolder viewHolder) {
         headerViewHolder = viewHolder;
     }
 

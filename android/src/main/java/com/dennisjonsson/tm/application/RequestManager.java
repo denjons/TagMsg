@@ -13,22 +13,33 @@ public class RequestManager {
 
     public final String LOG_TAG = "RequestManager";
 
-    public final ArrayList<Request> requests;
+    public final ArrayList<Request> inbox;
+    public final ArrayList<Request> outbox;
 
     RequestManager() {
-        requests = new ArrayList<>();
+        inbox = new ArrayList<>();
+        outbox = new ArrayList<>();
     }
 
-    public void setRequests(ArrayList<Request> requests){
-        this.requests.clear();
-        this.requests.addAll(requests);
+    public void setInbox(ArrayList<Request> requests){
+        this.inbox.clear();
+        this.inbox.addAll(requests);
         Log.d(LOG_TAG, "current size of requests is "+requests.size());
     }
 
-    public void addRequests(ArrayList<Request> requests){
-        this.requests.addAll(requests);
+    public void addToInbox(ArrayList<Request> requests){
+        this.inbox.addAll(requests);
     }
 
+    public void setOutbox(ArrayList<Request> requests){
+        this.outbox.clear();
+        this.outbox.addAll(requests);
+
+    }
+
+    public void addToOutbox(ArrayList<Request> requests){
+        this.outbox.addAll(requests);
+    }
 
 
 }

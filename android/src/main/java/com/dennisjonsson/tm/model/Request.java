@@ -1,6 +1,7 @@
 package com.dennisjonsson.tm.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -17,5 +18,10 @@ public class Request {
 		this.content = content;
 		this.date = date;
 		this.tags = tags;
+	}
+
+	@Override
+	public String toString() {
+		return id+"; "+user+"; "+content+"; "+date+"; "+ Arrays.toString(tags.toArray());
 	}
 }

@@ -3,12 +3,16 @@ package com.dennisjonsson.tm.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +20,7 @@ import android.widget.TextView;
 import com.dennisjonsson.tagmessenger.R;
 import com.dennisjonsson.tm.application.TMApplication;
 import com.dennisjonsson.tm.application.TMService;
+import com.dennisjonsson.tm.util.InputHandler;
 import com.dennisjonsson.tm.util.Validator;
 import com.dennisjonsson.tm.util.ValidatorException;
 
@@ -31,9 +36,12 @@ public class RequestCreateActivity extends AppCompatActivity implements
     private TextView testTagsText;
 
     private Validator validator;
+    private InputHandler inputHandler;
 
     private ArrayList<String> tags;
     private LinearLayout progressBar;
+
+    private String tagText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,31 +52,35 @@ public class RequestCreateActivity extends AppCompatActivity implements
 
         tags = new ArrayList<>();
         validator = new Validator();
+        inputHandler = new InputHandler();
         tagEditText = (EditText)findViewById(R.id._request_create_add_tag_text);
         progressBar = (LinearLayout)findViewById(R.id.request_create_progressbar);
         requestEditText = (EditText)findViewById(R.id.request_create_content_text);
         testTagsText = (TextView)findViewById(R.id.request_create_test_tags);
 
-        tagEditText.setOnKeyListener(new View.OnKeyListener(){
+        tagEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                switch(keyCode){
-                    case KeyEvent.KEYCODE_ENTER:
-                        if(event.getAction() != KeyEvent.ACTION_DOWN){
-                            addTag(tagEditText.getText().toString());
-                        }
-                        break;
-                    default:
-                        break;
-
-                }
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                tagText = s.toString();
             }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String str = s.toString();
+                if(str.contains("\n")){
+                    addTag(str);
+                    Log.d(LOG_TAG,"enter");
+                }
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -94,9 +106,14 @@ public class RequestCreateActivity extends AppCompatActivity implements
 
     public void addTag(String tag){
 
-        tag = tag.trim();
+
+        ArrayList<String> inputTags = inputHandler.hanldeTags(tag);
         try {
-            validator.validateTag(tag);
+
+            for(String tagStr: inputTags){
+                Log.d(LOG_TAG, tagStr);
+                validator.validateTag(tagStr);
+            }
         } catch (ValidatorException e) {
             // TODO: notify user with message.
             Log.d(LOG_TAG, e.getMessage());
@@ -104,15 +121,19 @@ public class RequestCreateActivity extends AppCompatActivity implements
             return;
         }
 
-        tags.add(tag);
-        Log.d(LOG_TAG, "added tag " + tag);
+        tags.addAll(inputTags);
 
-        // test
-        if(testTagsText.length() > 0){
-            testTagsText.append(", ");
+        for(String tagStr: inputTags){
+            // test
+            if(testTagsText.length() > 0){
+
+                testTagsText.append(", ");
+            }
+            testTagsText.append(tagStr);
+            Log.d(LOG_TAG, "added tag " + tagStr);
         }
-        testTagsText.append(tag);
 
+        testTagsText.setVisibility(View.VISIBLE);
         tagEditText.getText().clear();
 
     }
