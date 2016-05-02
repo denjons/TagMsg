@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" ng-app="tagMsg">
+<head>
+  <meta charset="utf-8">
+  <title>My HTML File</title>
+  <!--<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">-->
+  <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="css/msg_view.css" type="text/css" media="screen" />
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="js/controllers/request_controller.js"></script>
+  
+</head>
+<body>
+	
+	<div id="wraper">
+		<div id="top_banner" >
+			<div id="top_banner_content">
+			
+				<h1 class="white_text">wisCos</h1>
+				<table>
+					<tr>
+						<td>
+							<a href="#about_section" id="about" class="white_text">about</a>
+						</td>
+						
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div id="content_view">
+		
+			<table>
+				<tr>
+					<td id="content_view_left" valign="top">	
+						<div id="tags_view">
+							<form id="tags_form">
+								<input id="tags_input" type="text"/>
+							</form>
+							<p>Nothing in {{'tags_view'}}</p>
+						</div>
+						<div id="requests_view" ng-controller="RequestListCtrl">
+							<ul>
+								<li ng-repeat="request in requests">
+									<div class="request dark_text">
+										<p class="content">{{request.content}}</p>
+										<p class="tags">{{request.tags}}</p>
+										<span class="date">{{request.date}}</span>
+									</div>
+								</li>
+							  </ul>
+						</div>
+					</td>
+					<td id="content_view_middle" valign="top">
+						<div id="responses_view">
+							<p>Nothing in {{'middle_content_view'}}</p>
+						</div>
+						
+						<div id="response_input_view">
+							<form id="response_form">
+								<textarea id="response_text_area">
+								</textarea>
+							</form>
+						</div>
+					</td>
+					<td id="content_view_right" valign="top">
+						<div id="user_requests_view">
+							<p>Nothing in {{'content_view_right'}}</p>
+						</div>
+					</td>
+				</tr>
+			</table>
+		
+			
+		
+			
+			
+			
+		
+		</div>
+		
+		
+	</div>	
+
+</body>
+</html>

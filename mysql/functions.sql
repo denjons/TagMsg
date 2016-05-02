@@ -110,6 +110,17 @@ begin
 end //
 DELIMITER ;
 
+DELIMITER //
+create function getDateOfRequest(req_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(requestExists(req_id) = 1) then
+		select date into @date from Requests where Requests.id = req_id;
+	end if;
+    return @date;
+end //
+DELIMITER ;
+
 /*
 		****************************** responses ******************************
 */
@@ -126,5 +137,14 @@ begin
 end //
 DELIMITER ;
 
-
+DELIMITER //
+create function getDateOfResponse(resp_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(responseExists(resp_id) = 1) then
+		select date into @date from Responses where Responses.id = resp_id;
+	end if;
+    return @date;
+end //
+DELIMITER ;
 

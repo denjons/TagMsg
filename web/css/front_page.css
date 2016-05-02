@@ -1,0 +1,107 @@
+/*	header	*/
+#header{
+	padding-top:50px;
+	width:inherit;
+	background:#424242;
+	background-image:url('images/bgimg1.jpg');
+	background-position:55% 50%;
+	background-attachment: fixed;
+	z-index:1;
+	
+}
+
+#header_content{
+	padding-top:50px;
+	height:inherit;
+	width:60%;
+	margin-left:20%;
+}
+
+#top_banner{
+	position:fixed;
+	height:50px;
+	width:100%;
+	z-index:2;
+}
+/*
+#header_title{
+	position:absolute;
+	float:left;
+}
+
+#header_title h1{
+	margin:0;
+	padding:0;
+	font-size:50px;
+}
+
+#header_links{
+	padding-top:10px;
+	float:right;
+}
+
+#header_links ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+#header_links li{
+	font-size:35px;
+	margin-bottom:20px;
+}
+*/
+/*	slogan	*/
+#slogan{
+	position:absolute;
+	width:inherit;
+	padding-left:50px;
+	padding-right:50px;
+	text-align:center;
+}
+#slogan h2{
+	font-size:50px;
+}
+#slogan p{
+	font-size:30px;
+}
+
+
+/* register*/
+#register{
+	height:32px;
+}
+#register form{
+	height:inherit;
+}
+#register input{
+	font-size:30px;
+	font-family:helvetica;
+	border-style:none;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+}
+#register button{
+	height:36px;
+	width:36px;
+}
+
+.enter_button{
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-style:none;
+	background:#42ddaa;
+	color:#ffffff;
+}
+
+/*	content		*/
+#body_content{
+	width:60%;
+	margin-left:20%;
+}
+#body_content h2{
+	font-size:50px;
+}
+#body_content p{
+	font-size:25px;
+}

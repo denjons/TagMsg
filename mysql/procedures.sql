@@ -206,13 +206,20 @@ DELIMITER ;
 	get requests for user
 */
 DELIMITER //
-create procedure getRequestsFromUser(userId VARCHAR(40))
+create procedure getRequestsFromUser(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
 begin
 	if(userExists(userId) = -1) then 
 		signal sqlstate '20001';
 	end if;
     
-	select * from getRequests where user = userId;
+    set @startDate = getDateOfRequest(fromRequest);
+    set @endDate = getDateOfRequest(beforeRequest);
+    
+	select * from getRequests where user = userId 
+    AND (@startDate <= getRequests.date OR @startDate IS NULL)
+	AND (@endDate >= getRequests.date OR @endDate IS NULL)
+	order by date DESC limit requestLimit offset requestOffset;
+    
 end //
 DELIMITER ;
 
@@ -220,13 +227,21 @@ DELIMITER ;
 		get all requests a user is eligible for
 */
 DELIMITER //
-create procedure getEligibleRequestsForUser(userId VARCHAR(40), requestLimit int, requestOffset int)
+create procedure getEligibleRequestsForUser(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
 begin
 	if(userExists(userId) = -1) then 
 		signal sqlstate '20001';
 	end if;
+    
+    set @startDate = getDateOfRequest(fromRequest);
+    set @endDate = getDateOfRequest(beforeRequest);
+    
     if(userHasTags(userId) = -1) then
-		select * from getRequests order by date DESC limit requestLimit offset requestOffset;
+		select * from getRequests
+        where userId != getRequests.user
+        AND (@startDate <= getRequests.date OR @startDate IS NULL)
+        AND (@endDate >= getRequests.date OR @endDate IS NULL)
+        order by date DESC limit requestLimit offset requestOffset;
     else
 		select table1.request as id, getRequests.user, getRequests.content, getRequests.tags as tags , getRequests.date from
 		(select request from eligibleForUser where eligibleForUser.user = userId ) as table1
@@ -234,11 +249,13 @@ begin
 		getRequests 
 		on 
 		getRequests.id = table1.request AND NOT getRequests.user = userId
+        AND (@startDate <= getRequests.date OR @startDate IS NULL)
+        AND (@endDate >= getRequests.date OR @endDate IS NULL)
 		ORDER BY getRequests.date DESC
 		LIMIT requestLimit offset requestOffset;
     end if;
 end //
-DELIMITER ;
+DELIMITER ;  
 
 /*
 		get requests for tags
@@ -341,13 +358,16 @@ DELIMITER ;
 		get responses for request
 */
 DELIMITER //
-create procedure getResponsesForRequest(user VARCHAR(40), reqId varchar(40))
+create procedure getResponsesForRequest(user VARCHAR(40), reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
 begin 
-	
-	/*if userIsownerOfRequest(user, reqId) = -1 then
-		signal sqlstate '20009';
-    end if;*/
-	select * from Responses where  Responses.request = reqId ;
+
+	set @startDate = getDateOfResponse(fromResponse);
+    set @endDate = getDateOfResponse(beforeResponse);
+    
+	select * from Responses where  Responses.request = reqId
+    AND (@startDate <= Responses.date OR @startDate IS NULL)
+	AND (@endDate >= Responses.date OR @endDate IS NULL)
+	order by date DESC limit responseLimit offset responseOffset;
 end //
 DELIMITER ;
 
