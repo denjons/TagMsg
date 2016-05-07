@@ -10,6 +10,8 @@ public class RequestUpdateDTO {
     public UserDTO user;
     public int limit;
     public int offset;
+    public String fromRequest;
+    public String beforeRequest;
 
     public RequestUpdateDTO(UserDTO user, int limit, int offset) {
         this.user = user;
