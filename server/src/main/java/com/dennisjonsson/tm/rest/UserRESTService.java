@@ -1,80 +1,82 @@
 package com.dennisjonsson.tm.rest;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.dennisjonsson.tm.client.NewUserDTO;
+import com.dennisjonsson.tm.application.TMAppConstants;
 import com.dennisjonsson.tm.client.UserDTO;
-import com.dennisjonsson.tm.client.UserTagDTO;
+import com.dennisjonsson.tm.client.UserTagListDTO;
 import com.dennisjonsson.tm.data.UserTransformer;
-import com.dennisjonsson.tm.model.User;
+import com.dennisjonsson.tm.entity.User;
+import com.dennisjonsson.tm.rest.provider.JWTTokenAuthentication;
 import com.dennisjonsson.tm.service.CSTServiceException;
 import com.dennisjonsson.tm.service.UserService;
+import com.dennisjonsson.tm.util.JWTToken;
 
 
 
 @Path("/user")
+//@Api(value = "/user")
 @RequestScoped
 public class UserRESTService {
 	
 	@Inject
-	CSTValidator validator;
+	TMValidator validator;
 	
 	@Inject
 	UserService UserCreationService;
 
 	
-	@POST
-	@Path("/adduser")
+	@GET
+	/*
+	@ApiOperation(value = "Creates user", 
+	    notes = "Multiple status values can be provided with comma separated strings",
+	    response = UserDTO.class)
+	*/
+	@Path("/createuser")
+	@JWTTokenAuthentication
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserDTO postAddUser(NewUserDTO userDto){
+	public Response createUser(){
 		
 		try{
-			validator.validateNewUserDTO(userDto);
-			User user = UserCreationService.addUser();
+			User user = UserCreationService.createUser();
 			UserDTO newUser = UserTransformer.toUserDTO(user);
-			return newUser;
-		}
-		catch(ConstraintViolationException e){
-			Response.ResponseBuilder builder = 
-					validator.createViolationResponse(e.getConstraintViolations());
-			throw new WebApplicationException(builder.build());
 			
-		}
-		catch (CSTServiceException e) {
+			Response.ResponseBuilder builder = Response.ok(newUser)
+					.header(HttpHeaders.AUTHORIZATION, JWTToken
+							.createWebToken(newUser.id, TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
+			return builder.build();
+			
+		}catch (CSTServiceException e) {
 			throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
 		}
 		
 	}
 	
 	@POST
+	@JWTTokenAuthentication
 	@Path("/addusertags")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response postAddUserTags(UserTagDTO userDto){
+	public Response postAddUserTags(UserTagListDTO userDto){
 		
 		Response.ResponseBuilder builder = null;
 
 		try{
 			
 			validator.validateUserTag(userDto);
-			UserCreationService.addTagForUser(userDto.tags, userDto.user.id);
+			
+			UserCreationService.addTagForUser(userDto);
 			
 			builder = Response.ok();
 		
@@ -92,14 +94,14 @@ public class UserRESTService {
 	@Path("/removeusertags")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response postRemoveTagForUser(UserTagDTO userDto){
+	public Response postRemoveTagForUser(UserTagListDTO userDto){
 		
 		Response.ResponseBuilder builder = null;
 
 		try{
 			validator.validateUser(userDto.user);
 			validator.validateUserTag(userDto);
-			UserCreationService.removeTagForUser(userDto.tags, userDto.user.id);
+			UserCreationService.removeTagForUser(userDto);
 
 			builder = Response.ok();
 		

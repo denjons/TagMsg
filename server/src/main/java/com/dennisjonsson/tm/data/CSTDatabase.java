@@ -36,6 +36,7 @@ public class CSTDatabase{
 	
 	public CSTDatabase(){
 		
+		/*
 		DB_HOST = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
 		DB_PORT = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
 		DB_USER = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
@@ -47,9 +48,9 @@ public class CSTDatabase{
 				"jdbc:mysql://"+DB_HOST+":"+DB_PORT+"/"+DB+"?"
 				+ "user="+DB_USER+"&"
 				+ "password="+DB_PASSWORD;
-				
+			*/	
 		
-		//this.constring = "jdbc:mysql://127.0.0.1:3306/tm_db?user=dennis&password=b0c136a4";
+		this.constring = "jdbc:mysql://127.0.0.1:3306/tm_db?user=dennis&password=B0c136a##";
 	}
 	
 	

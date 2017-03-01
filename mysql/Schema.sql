@@ -1,35 +1,43 @@
 
 
-CREATE TABLE IF NOT EXISTS Tags(
+CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
 	tag VARCHAR(50),
-	PRIMARY KEY (tag)
-);
-
-CREATE TABLE IF NOT EXISTS Users (
-	id VARCHAR(40),
-	date datetime,
+    UNIQUE tag_u (tag),
+    index tag_index (tag, id),
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS HasTags(
-	user VARCHAR(40),
-	tag VARCHAR(50),
-	PRIMARY KEY (tag, user),
-	FOREIGN KEY (user) REFERENCES Users(id),
-	FOREIGN KEY (tag) REFERENCES Tags(tag)
+CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	uu_id VARCHAR(40),
+	date datetime,
+    index user_index(id),
+	PRIMARY KEY (id)
 );
 
+
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+
+
+/*
 CREATE TABLE IF NOT EXISTS Requests(
 	id VARCHAR(40),
 	user VARCHAR(40),
 	content TEXT,
 	PRIMARY KEY(id),
     date timestamp default current_timestamp,
-	/* REQUESTED BY*/
 	FOREIGN KEY (user) REFERENCES Users(id) 
 ); 
 
-CREATE TABLE IF NOT EXISTS OfTag(
+CREATE TABLE IF NOT EXISTS RequestTagRelation(
 	request VARCHAR(40),
 	tag VARCHAR(50),
 	PRIMARY KEY (request, tag),
@@ -57,14 +65,15 @@ CREATE TABLE IF NOT EXISTS VerifiedBy(
 	FOREIGN KEY (request) REFERENCES Requests(id)
 	
 );
-
+*/
 /*
 	***********************************  extended database **********************************
 */
 
+/*
 CREATE TABLE IF NOT EXISTS Images(
 	id VARCHAR(40),
-	image BLOB, /* BYTE ARRAY */
+	image BLOB, 
 	PRIMARY KEY (id)
 );
 
@@ -87,3 +96,4 @@ CREATE TABLE IF NOT EXISTS UserImages(
 	FOREIGN KEY (user) REFERENCES Users(id),
 	FOREIGN KEY (image) REFERENCES Images(id)
 );
+*/

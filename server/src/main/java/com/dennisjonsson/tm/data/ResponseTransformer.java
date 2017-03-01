@@ -8,8 +8,8 @@ import java.util.Date;
 
 import com.dennisjonsson.tm.client.ResponseDTO;
 import com.dennisjonsson.tm.client.ResponseListDTO;
+import com.dennisjonsson.tm.entity.User;
 import com.dennisjonsson.tm.model.Response;
-import com.dennisjonsson.tm.model.User;
 
 public class ResponseTransformer {
 	

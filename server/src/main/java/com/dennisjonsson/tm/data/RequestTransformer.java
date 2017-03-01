@@ -1,15 +1,11 @@
 package com.dennisjonsson.tm.data;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.dennisjonsson.tm.client.RequestDTO;
 import com.dennisjonsson.tm.client.RequestListDTO;
-import com.dennisjonsson.tm.client.UserDTO;
+import com.dennisjonsson.tm.entity.User;
 import com.dennisjonsson.tm.model.Request;
-import com.dennisjonsson.tm.model.User;
 
 
 public class RequestTransformer {

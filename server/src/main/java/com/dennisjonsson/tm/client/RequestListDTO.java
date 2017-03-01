@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class RequestListDTO {
-	
+
 	@NotNull
 	public ArrayList<RequestDTO> requests;
 }

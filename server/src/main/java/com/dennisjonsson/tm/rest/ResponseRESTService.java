@@ -24,7 +24,7 @@ import com.dennisjonsson.tm.service.ResponseService;
 public class ResponseRESTService {
 	
 	@Inject
-	CSTValidator validator;
+	TMValidator validator;
 	
 	@Inject
 	ResponseService responseService;

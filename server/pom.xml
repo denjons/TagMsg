@@ -12,9 +12,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <swagger-maven-plugin-version>3.1.4</swagger-maven-plugin-version>
     </properties>
-    
-  
     
     <dependencies>
     
@@ -30,7 +29,48 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.6</version>
 		</dependency>
-        
+		
+		<dependency>
+		    <groupId>org.hibernate.javax.persistence</groupId>
+		    <artifactId>hibernate-jpa-2.1-api</artifactId>
+		    <version>1.0.0.Final</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-search -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-search</artifactId>
+		    <version>5.7.0.Final</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+		<dependency>
+	        <groupId>io.swagger</groupId>
+	        <artifactId>swagger-jaxrs</artifactId>
+	        <version>1.5.0</version>
+	    </dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>0.7.0</version>
+		</dependency>
+				
+		
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/jose-jwt -->
+		<!--  
+		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>jose-jwt</artifactId>
+		    <version>3.1.0.Final</version>
+		</dependency>-->
+		
+
         <!-- 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
@@ -59,32 +99,67 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-		
-       
     </dependencies>
 
-<profiles>
-    <profile>
-     <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
-     <!-- Use this profile for any OpenShift specific customization your app will need. -->
-     <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
-     <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
-     <id>openshift</id>
-     <build>
-        <finalName>tm</finalName>
-        <plugins>
-          <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <outputDirectory>deployments</outputDirectory>
-              		  <warName>ROOT</warName>
-                </configuration>
-            </plugin>
-        </plugins>
-      </build>
-    </profile>
+	<profiles>
+		<profile>
+			<id>local</id>
+			  <activation>
+			      <jdk>1.8</jdk>
+			  </activation>
+			<build>
+			<finalName>tm</finalName>
+			<plugins>
+			
+	          <plugin>
+	               <groupId>org.apache.maven.plugins</groupId>
+	                 <artifactId>maven-compiler-plugin</artifactId>
+	    			<version>3.6.1</version>
+	               <configuration>
+	                   <java-version>1.8</java-version>
+	               </configuration>
+	            </plugin>
+	            
+	           <plugin>
+	            <groupId>com.github.kongchen</groupId>
+		            <artifactId>swagger-maven-plugin</artifactId>
+		            <version>3.1.4</version>
+		            <configuration>
+		                <apiSources>
+		                    <apiSource>
+								<locations>com.dennisjonsson.tm.rest.UserService</locations>
+								<info>
+									<title>tag-msg</title>
+									<version>1.5.12</version>
+								</info>
+		                    </apiSource>
+		                </apiSources>
+		            </configuration>
+		        </plugin>
+	           </plugins>
+			</build>
+		</profile>
+	    <profile>
+	     <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
+	     <!-- Use this profile for any OpenShift specific customization your app will need. -->
+	     <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
+	     <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
+	     <id>openshift</id>
+	     <build>
+	        <finalName>tm</finalName>
+	        <plugins>
+	          <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-war-plugin</artifactId>
+	                <version>2.3</version>
+	                <configuration>
+	                    <failOnMissingWebXml>false</failOnMissingWebXml>
+	                    <outputDirectory>deployments</outputDirectory>
+	              		  <warName>ROOT</warName>
+	                </configuration>
+	            </plugin>
+	        </plugins>
+	      </build>
+	    </profile>
   </profiles>
 </project>

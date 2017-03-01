@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Response {
+	
 	private String id, user, request;
 	public String content;
 	public Date date;

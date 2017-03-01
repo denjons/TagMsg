@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import com.dennisjonsson.tm.client.RequestDTO;
 import com.dennisjonsson.tm.client.RequestListDTO;
 import com.dennisjonsson.tm.client.RequestUpdateDTO;
-import com.dennisjonsson.tm.client.TagsDTO;
+import com.dennisjonsson.tm.client.TagListDTO;
 import com.dennisjonsson.tm.client.UserDTO;
 import com.dennisjonsson.tm.data.RequestTransformer;
 import com.dennisjonsson.tm.data.UserTransformer;
@@ -31,7 +31,7 @@ import com.dennisjonsson.tm.service.RequestService;
 public class RequestRESTService {
 	
 	@Inject
-	CSTValidator validator;
+	TMValidator validator;
 	
 	@Inject
 	RequestService requestService;
@@ -112,7 +112,7 @@ public class RequestRESTService {
 	@Path("/getRequestsFromTags")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RequestListDTO postGetRequestsFromTags(TagsDTO tagsDTO){
+	public RequestListDTO postGetRequestsFromTags(TagListDTO tagsDTO){
 		
 		try {
 			validator.validateTags(tagsDTO);
