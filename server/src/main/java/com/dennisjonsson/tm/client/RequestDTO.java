@@ -8,32 +8,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RequestDTO {
 
-	@NotNull
-	public String id;
+    @NotNull
+    public String id;
 
-	@NotNull
-	public UserDTO user;
+    @NotNull
+    public UserDTO user;
 
-	@NotNull
-	public String content;
+    @NotNull
+    public String content;
 
-	@NotNull
-	public ArrayList<String> tags;
+    @NotNull
+    public ArrayList<String> tags;
 
-	public String date;
+    public String date;
 
-	public RequestDTO(String id, UserDTO user, String content, ArrayList<String> tags, String date) {
-		super();
-		this.id = id;
-		this.user = user;
-		this.content = content;
-		this.tags = tags;
-		this.date = date;
-	}
+    public RequestDTO(String id, UserDTO user, String content, ArrayList<String> tags, String date) {
+	super();
+	this.id = id;
+	this.user = user;
+	this.content = content;
+	this.tags = tags;
+	this.date = date;
+    }
 
-	public RequestDTO() {
-		super();
-	}
+    public RequestDTO() {
+	super();
+    }
 
 }
 

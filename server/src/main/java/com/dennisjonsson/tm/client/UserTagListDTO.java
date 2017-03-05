@@ -9,11 +9,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @XmlRootElement
 public class UserTagListDTO {
-	
-	@NotNull
-	public UserDTO user;
-	
-	@NotNull
-	@NotEmpty
-	public ArrayList<String> tags;
+
+    @NotNull
+    public UserDTO user;
+
+    @NotNull
+    @NotEmpty
+    public ArrayList<String> tags;
+
 }
