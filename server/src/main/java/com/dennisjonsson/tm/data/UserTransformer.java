@@ -9,29 +9,28 @@ import com.dennisjonsson.tm.entity.UserTagRelation;
 
 public class UserTransformer {
 
-	public static User toUser(UserDTO userDto) {
+    public static User toUser(UserDTO userDto) {
 
-		User user = new User(userDto.id);
-		// DateFormat format = new
-		// SimpleDateFormat(ApplicationConstants.DATE_FORMAT);
+	User user = new User(userDto.id);
+	// DateFormat format = new
+	// SimpleDateFormat(ApplicationConstants.DATE_FORMAT);
 
-		return user;
+	return user;
+    }
+
+    public static UserDTO toUserDTO(User user) {
+	return new UserDTO(user.getUu_id());
+    }
+
+    public static void toUserTagRelations(ArrayList<UserTagRelation> relations, UserTagListDTO userTagDTO, String id) {
+
+	/*
+	 * userTagDTO.tags.stream() .map((tag) -> new
+	 * UserTagRelation(userTagDTO.user.id, tag)) .map(relations::add);
+	 */
+	for (String tag : userTagDTO.tags) {
+	    relations.add(new UserTagRelation(id, tag));
 	}
-
-	public static UserDTO toUserDTO(User user) {
-		return new UserDTO(user.getUu_id());
-	}
-
-	public static void toUserTagRelations(ArrayList<UserTagRelation> relations, UserTagListDTO userTagDTO) {
-		
-		/*
-		userTagDTO.tags.stream()
-		.map((tag) -> new UserTagRelation(userTagDTO.user.id, tag))
-		.map(relations::add);
-		*/
-		for(String tag : userTagDTO.tags){
-			relations.add(new UserTagRelation(userTagDTO.user.id, tag));
-		}
-	}
+    }
 
 }

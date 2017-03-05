@@ -19,11 +19,11 @@ import javax.ws.rs.core.Response;
 import com.dennisjonsson.tm.application.TMAppConstants;
 import com.dennisjonsson.tm.client.UserDTO;
 import com.dennisjonsson.tm.client.UserTagListDTO;
+import com.dennisjonsson.tm.data.UserTransformer;
 import com.dennisjonsson.tm.entity.User;
-import com.dennisjonsson.tm.rest.provider.JWTTokenAuthentication;
+import com.dennisjonsson.tm.rest.provider.JWTTokenAutorization;
 import com.dennisjonsson.tm.service.CSTServiceException;
 import com.dennisjonsson.tm.service.UserService;
-import com.dennisjonsson.tm.service.UserValidationService;
 import com.dennisjonsson.tm.util.JWTToken;
 
 @Path("/user")
@@ -37,9 +37,6 @@ public class UserRESTService {
     @Inject
     UserService UserCreationService;
 
-    @Inject
-    UserValidationService userValidationService;
-
     @GET
     /*
      * @ApiOperation(value = "Creates user", notes =
@@ -47,95 +44,87 @@ public class UserRESTService {
      * response = UserDTO.class)
      */
     @Path("/createuser")
-    @JWTTokenAuthentication
+    @JWTTokenAutorization
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser() {
 
-	User newUser = new User("test-user-id-123456789123456789");
+	try {
+	    User user = UserCreationService.createUser();
+	    UserDTO newUser = UserTransformer.toUserDTO(user);
 
-	Response.ResponseBuilder builder = Response.ok(newUser).header(HttpHeaders.AUTHORIZATION,
-		JWTToken.createWebToken(newUser.getUu_id(), TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
-	return builder.build();
+	    Response.ResponseBuilder builder = Response.ok(newUser)
 
-	// try{
-	// User user = UserCreationService.createUser();
-	// UserDTO newUser = UserTransformer.toUserDTO(user);
-	//
-	// Response.ResponseBuilder builder = Response.ok(newUser)
-	// .header(HttpHeaders.AUTHORIZATION, JWTToken
-	// .createWebToken(newUser.id, TMAppConstants.SERVER_APP_KEY,
-	// "/user/createuser"));
-	// return builder.build();
-	//
-	// }catch (CSTServiceException e) {
-	// throw new
-	// WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
-	// }
+		    .header(HttpHeaders.AUTHORIZATION,
+			    JWTToken.createWebToken(newUser.id, TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
+	    return builder.build();
+
+	} catch (CSTServiceException e) {
+	    throw new WebApplicationException(
+		    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
+	}
 
     }
 
     @POST
-    @JWTTokenAuthentication
+    @JWTTokenAutorization
     @Path("/addusertags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response postAddUserTags(UserTagListDTO userDto) {
+    public Response postAddUserTags(@HeaderParam("AUTHORIZED-ID") String userId, UserTagListDTO userDto) {
 
 	Response.ResponseBuilder builder = null;
-	builder = Response.ok();
+
+	try {
+	    validator.validateUserTag(userDto);
+
+	    UserCreationService.addTagForUser(userDto, userId);
+
+	    builder = Response.ok();
+
+	} catch (ConstraintViolationException e) {
+	    builder = validator.createViolationResponse(e.getConstraintViolations());
+	} catch (CSTServiceException e) {
+	    throw new WebApplicationException(
+		    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
+	}
 	return builder.build();
-	//
-	// try {
-	//
-	// validator.validateUserTag(userDto);
-	//
-	// UserCreationService.addTagForUser(userDto);
-	//
-	// builder = Response.ok();
-	// return builder.build();
-	// } catch (ConstraintViolationException e) {
-	// builder =
-	// validator.createViolationResponse(e.getConstraintViolations());
-	// } catch (CSTServiceException e) {
-	// throw new WebApplicationException(
-	// Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
-	// }
 
     }
 
     @GET
+    @JWTTokenAutorization
     @Path("/getusertags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response postGetUserTags(@HeaderParam("AUTHORIZATION") String auth) {
-
-	String userId = userValidationService.identifyUser(auth);
+    public Response getUserTags(@HeaderParam("AUTHORIZED-ID") String userId) {
 
 	UserTagListDTO utl = new UserTagListDTO();
 	utl.tags = new ArrayList<String>();
 	utl.tags.add("japanese");
 	utl.tags.add("fininsh");
 	utl.tags.add("german");
-	utl.user = new UserDTO();
+
 	Response.ResponseBuilder builder = null;
 	builder = Response.ok(utl);
 
 	return builder.build();
+
     }
 
     @POST
+    @JWTTokenAutorization
     @Path("/removeusertags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response postRemoveTagForUser(UserTagListDTO userDto) {
+    public Response postRemoveTagForUser(@HeaderParam("AUTHORIZED-ID") String userId, UserTagListDTO userTagListDTO) {
 
 	Response.ResponseBuilder builder = null;
 
 	try {
-	    validator.validateUser(userDto.user);
-	    validator.validateUserTag(userDto);
-	    UserCreationService.removeTagForUser(userDto);
+
+	    validator.validateUserTag(userTagListDTO);
+	    UserCreationService.removeTagForUser(userTagListDTO, userId);
 
 	    builder = Response.ok();
 

@@ -2,11 +2,14 @@ package com.dennisjonsson.tm.rest.provider;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
+
+import com.dennisjonsson.tm.service.UserValidationService;
 
 /*
  * JSON web token authentication
@@ -14,23 +17,29 @@ import javax.ws.rs.ext.Provider;
  * 
  * */
 
-@JWTTokenAuthentication
-@Provider //@Priority(Priorities.AUTHENTICATION)
-public class JWTTokenFilter implements ContainerRequestFilter{
+@JWTTokenAutorization
+@Provider // @Priority(Priorities.AUTHENTICATION)
+public class JWTTokenFilter implements ContainerRequestFilter {
 
-	@Override
-	public void filter(ContainerRequestContext ctx) throws IOException {
-		
-		String authString = ctx.getHeaderString(HttpHeaders.AUTHORIZATION);
-		
-		// TODO: use appropriate tool for generating token
-		
-		if(authString == null || !authString.equalsIgnoreCase("test_app_key")){
-			throw new NotAuthorizedException("invalid app key: "+ "'"+authString+"'");
-		}
-		
+    @Inject
+    UserValidationService userValidationService;
+
+    @Override
+    public void filter(ContainerRequestContext ctx) throws IOException {
+
+	String authString = ctx.getHeaderString(HttpHeaders.AUTHORIZATION);
+
+	if (authString == null) {
+	    throw new NotAuthorizedException("no authorization header present");
 	}
-	
 
+	if (!authString.equalsIgnoreCase("test_app_key")) {
+	    String userId = userValidationService.identifyUser(authString);
+	    ctx.getHeaders().add("AUTHORIZED-ID", userId);
+	}
+
+	// TODO: use appropriate tool for generating token
+
+    }
 
 }
