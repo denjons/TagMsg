@@ -1,41 +1,94 @@
 
+/*
+	adds user and returns new id 
+    or 
+    returns id for existing user
+*/
+DELIMITER //
+create procedure CREATE_USER()
+BEGIN
+	set @uuid = UUID();
+	INSERT INTO USERS (uu_id, date) VALUES (@uuid, current_timestamp());
+	SELECT * FROM Users WHERE Users.id = @uuid;
+end //
+DELIMITER ;
 
+
+
+/*
+		***************************** TAGS ********************************
+*/
+
+DELIMITER //
+create procedure ADD_TAG(tag_name VARCHAR(50))
+BEGIN
+	IF TAG_EXISTS(tag_name)= -1 then 
+		insert into TAGS (tag) values (tag_name);
+	END IF;
+end //
+DELIMITER ;
+
+
+DELIMITER //
+create procedure ADD_USER_TAG(user varchar(40), tag_name VARCHAR(50))
+BEGIN
+	declare 
+    tag_id integer;
+    declare 
+    user_id integer;
+	call ADD_TAG(tag_name);
+    set user_id = USER_EXISTS(user);
+	set tag_id = TAG_EXISTS(tag_name);
+	if(user_id > 0 && tag_id > 0) then
+		insert into USER_TAG_RELATION (user, tag) values(user_id, tag_id);
+	END IF;
+end //
+DELIMITER ;
+
+
+DELIMITER //
+create procedure REMOVE_USER_TAG(user VARCHAR(40), tag_name VARCHAR(50))
+BEGIN
+	DECLARE
+    tag_id integer;
+    DECLARE
+    user_id integer;
+
+    set tag_id = TAG_EXISTS(tag_name);
+    set user_id = USER_EXISTS(user);
+    
+    if(tag_id > 0 && user_id > 0) then
+		DELETE FROM USER_TAG_RELATION WHERE USER_TAG_RELATION.user = user_id AND USER_TAG_RELATION.tag = tag_id ;
+    end if;
+    
+end //
+DELIMITER ;
 /*
 		************************ REQUESTS *************************
-*/
-
-/*
-		add request
-*/
-
-/*
-CREATE TABLE IF NOT EXISTS Requests(
-	id VARCHAR(40),
-	user int,
-	content TEXT,
-	PRIMARY KEY(id),
-	FOREIGN KEY (user) REFERENCES Users(id) 
-); 
-
 */
 
 /*
 	add request
 */
 DELIMITER //
-create procedure addRequest(user_id VARCHAR(40), content_input TEXT, req_id VARCHAR(40), tags VARCHAR(250))
+create procedure ADD_REQUEST(user VARCHAR(40), content_input TEXT, req_id VARCHAR(40))
 begin
 
-	if(userExists(user_id) = -1) then 
+    DECLARE
+    user_id integer;
+
+    set user_id = USER_EXISTS(user);
+    
+	if(user_id = -1) then 
 		signal sqlstate '20001';
 	end if;
     
-	if (requestExists(req_id) = -1) then
-		insert into Requests (id, user, content) values (req_id, user_id, content_input) ;
-        CALL addTagsForRequest(req_id, tags) ;
+	if (REQUEST_EXISTS(req_id) = -1) then
+		insert into REQUESTS (uu_id, user, content) values (req_id, user_id, content_input) ;
     else
 		signal sqlstate '20005';
     end if ;
+    
 end//
 DELIMITER ;
 
@@ -44,36 +97,29 @@ DELIMITER ;
 		add tags for request
 */
 
+-- drop procedure ADD_REQUEST_TAG;
+
 DELIMITER //
-create procedure addTagsForRequest(req_id VARCHAR(40), tags VARCHAR(250))
+create procedure ADD_REQUEST_TAG(req_id VARCHAR(40), tag_id VARCHAR(50))
 begin
-	DECLARE strLen    INT DEFAULT 0;
-	DECLARE SubStrLen INT DEFAULT 0;
-	IF tags IS NULL THEN
-		signal sqlstate '20006';
+	DECLARE
+    req_db_id integer;
+    DECLARE
+    tag_db_id integer;
+
+    call add_tag(tag_id);
+    
+    set req_db_id = REQUEST_EXISTS(req_id);
+    set tag_db_id = TAG_EXISTS(tag_id);
+    
+    IF(req_db_id = -1 || tag_db_id = -1) THEN
+		signal sqlstate '20008';
+	ELSEIF (REQUEST_HAS_TAG(req_db_id, tag_db_id) = -1) THEN
+		insert into requests_tag_relation (request, tag) values (req_db_id, tag_db_id) ;
 	ELSE
-		INSERT_LOOP:
-		loop
-			SET strLen = CHAR_LENGTH(tags);
-			SET @tag = SUBSTRING_INDEX(tags, ',', 1);
-            
-			IF tags = '' THEN
-			  LEAVE INSERT_LOOP;
-			END IF;
-            
-			IF (requestHasTag(req_id, @tag) = -1) THEN
-				call addTagIfNotExists(@tag) ;
-				insert into OfTag (request, tag) values (req_id, @tag) ;
-			ELSE
-				signal sqlstate '20007';
-                LEAVE INSERT_LOOP ;
-			END IF ;
-            
-            SET SubStrLen = CHAR_LENGTH(SUBSTRING_INDEX(tags, ',', 1)) + 2;
-			SET tags = MID(tags, SubStrLen, strLen);
-            
-		end loop INSERT_LOOP;
-    END IF ;
+		signal sqlstate '20007';
+	END IF ;
+    
 end//
 DELIMITER ;
 
@@ -81,19 +127,27 @@ DELIMITER ;
 /*
 	get requests for user
 */
+
+-- drop procedure GET_USER_REQUESTS;
+
 DELIMITER //
-create procedure getRequestsFromUser(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+create procedure GET_USER_REQUESTS(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
 begin
-	if(userExists(userId) = -1) then 
+	DECLARE
+    user_db_id integer;
+    
+    set user_db_id = USER_EXISTS(userId);
+    
+	if(user_db_id = -1) then 
 		signal sqlstate '20001';
 	end if;
     
-    set @startDate = getDateOfRequest(fromRequest);
-    set @endDate = getDateOfRequest(beforeRequest);
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
     
-	select * from getRequests where user = userId 
-    AND (@startDate <= getRequests.date OR @startDate IS NULL)
-	AND (@endDate >= getRequests.date OR @endDate IS NULL)
+	select * from REQUESTS_VIEW where user = user_db_id 
+    AND (@startDate <= REQUESTS_VIEW.date OR @startDate IS NULL)
+	AND (@endDate >= REQUESTS_VIEW.date OR @endDate IS NULL)
 	order by date DESC limit requestLimit offset requestOffset;
     
 end //
@@ -103,31 +157,31 @@ DELIMITER ;
 		get all requests a user is eligible for
 */
 DELIMITER //
-create procedure getEligibleRequestsForUser(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+create procedure GET_ELIGIBLE_REQUESTS(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
 begin
 	if(userExists(userId) = -1) then 
 		signal sqlstate '20001';
 	end if;
     
-    set @startDate = getDateOfRequest(fromRequest);
-    set @endDate = getDateOfRequest(beforeRequest);
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
     
-    if(userHasTags(userId) = -1) then
-		select * from getRequests
-        where userId != getRequests.user
-        AND (@startDate <= getRequests.date OR @startDate IS NULL)
-        AND (@endDate >= getRequests.date OR @endDate IS NULL)
+    if(USER_HAS_TAGS(userId) = -1) then
+		select * from REQUESTS_VIEW
+        where userId != REQUESTS_VIEW.user
+        AND (@startDate <= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate >= REQUESTS_VIEW.date OR @endDate IS NULL)
         order by date DESC limit requestLimit offset requestOffset;
     else
-		select table1.request as id, getRequests.user, getRequests.content, getRequests.tags as tags , getRequests.date from
-		(select request from eligibleForUser where eligibleForUser.user = userId ) as table1
+		select table1.request as id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.tags as tags , REQUESTS_VIEW.date from
+		(select request from ELIGIBLE_VIEW where ELIGIBLE_VIEW.user = userId ) as table1
 		join 
-		getRequests 
+		REQUESTS_VIEW 
 		on 
-		getRequests.id = table1.request AND NOT getRequests.user = userId
-        AND (@startDate <= getRequests.date OR @startDate IS NULL)
-        AND (@endDate >= getRequests.date OR @endDate IS NULL)
-		ORDER BY getRequests.date DESC
+		REQUESTS_VIEW.id = table1.request AND NOT REQUESTS_VIEW.user = userId
+        AND (@startDate <= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate >= REQUESTS_VIEW.date OR @endDate IS NULL)
+		ORDER BY REQUESTS_VIEW.date DESC
 		LIMIT requestLimit offset requestOffset;
     end if;
 end //
@@ -139,7 +193,7 @@ DELIMITER ;
 
 
 DELIMITER //
-create procedure getRequestsFromTags(tags TEXT, requestLimit int, requestOffset int, startDate TimeStamp, endDate Timestamp)
+create procedure GET_REQUESTS_FROM_TAGS(tags TEXT, requestLimit int, requestOffset int, startDate TimeStamp, endDate Timestamp)
 begin
 	
     SET @tags = tags;
@@ -149,12 +203,12 @@ begin
     SET @endDate = endDate;
     
     SET @Query = concat(
-    'select getRequests.id, getRequests.user, getRequests.content, getRequests.date, getRequests.tags',
-    ' from OfTag join getRequests on',
+    'select REQUESTS_VIEW.id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.date, REQUESTS_VIEW.tags',
+    ' from OfTag join REQUESTS_VIEW on',
     ' OfTag.tag in (?)',
-    ' AND (? <= getRequests.date OR ? IS NULL)',
-    ' AND (? >= getRequests.date OR ? IS NULL)',
-    ' AND getRequests.id = OfTag.request',
+    ' AND (? <= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND (? >= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND REQUESTS_VIEW.id = OfTag.request',
     ' limit ? offset ?;');
     
     PREPARE stmt FROM @query;
@@ -165,45 +219,6 @@ end //
 DELIMITER ;
 
 
-
-
-
-
-
-
-/*
-DELIMITER //
-create procedure getEligibleRequestsForUserAfterDate(userId VARCHAR(40), lastUpdate timestamp)
-begin
-	if(userExists(userId) = -1) then 
-		signal sqlstate '20001';
-	end if;
-    select table1.request as id, getRequests.user, getRequests.content, getRequests.tags as tags , getRequests.date from
-    (select request from eligibleForUser where eligibleForUser.user = userId ) as table1
-    join 
-    getRequests 
-    on 
-    getRequests.id = table1.request AND NOT getRequests.user = userId AND lastUpdate < getRequests.date;
-end //
-DELIMITER ;
-*/
-
-/*
-		************************ RESPONSES ***************************
-*/
-/*
-CREATE TABLE IF NOT EXISTS Responses(
-	id VARCHAR(40),
-	user int,
-	request VARCHAR(40),
-	date timestamp default current_timestamp,
-	content TEXT,
-	PRIMARY KEY(id),
-	FOREIGN KEY (user) REFERENCES Users(id),
-	FOREIGN KEY (request) REFERENCES Requests(id)
-);
-*/
-
 /*
 		add response for request
         updates if already exists
@@ -212,16 +227,16 @@ DELIMITER //
 create procedure addResponseToRequest(responder VARCHAR(40), resp_id varchar(40), resp_content TEXT, req_id varchar(40))
 begin
 	/* if user does not exist*/
-	if(userExists(responder) = -1) then 
+	if(USER_EXISTS(responder) = -1) then 
 		signal sqlstate '20001';
 	end if;
     
-	if(requestExists(req_id) = 1) then
-		if (responseExists(resp_id) = -1) then
-			insert into Responses (id, user, request, content) values (resp_id, responder, req_id, resp_content) ;
+	if(REQUEST_EXISTS(req_id) = 1) then
+		if (RESPONSE_EXISTS(resp_id) = -1) then
+			insert into RESPONSES (id, user, request, content) values (resp_id, responder, req_id, resp_content) ;
         else
 			/* upadte response */
-            update Responses set content = resp_content where Responses.id = resp_id AND Responses.user = responder;
+            update RESPONSES set content = resp_content where RESPONSES.id = resp_id AND RESPONSES.user = responder;
         end if;
     else
 		/* if request does not exist*/
@@ -237,12 +252,12 @@ DELIMITER //
 create procedure getResponsesForRequest(user VARCHAR(40), reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
 begin 
 
-	set @startDate = getDateOfResponse(fromResponse);
-    set @endDate = getDateOfResponse(beforeResponse);
+	set @startDate = GET_RESPONSE_DATE(fromResponse);
+    set @endDate = GET_RESPONSE_DATE(beforeResponse);
     
-	select * from Responses where  Responses.request = reqId
-    AND (@startDate <= Responses.date OR @startDate IS NULL)
-	AND (@endDate >= Responses.date OR @endDate IS NULL)
+	select * from RESPONSES where  RESPONSES.request = reqId
+    AND (@startDate <= RESPONSES.date OR @startDate IS NULL)
+	AND (@endDate >= RESPONSES.date OR @endDate IS NULL)
 	order by date DESC limit responseLimit offset responseOffset;
 end //
 DELIMITER ;

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS USERS (
 	id integer auto_increment,
 	uu_id VARCHAR(40),
 	date datetime,
-    index user_index(id),
+    index user_index(uu_id, id),
 	PRIMARY KEY (id)
 );
 
@@ -27,45 +27,48 @@ CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
 );
 
 
-/*
-CREATE TABLE IF NOT EXISTS Requests(
-	id VARCHAR(40),
-	user VARCHAR(40),
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+    uu_id VARCHAR(40),
+	user integer,
 	content TEXT,
+    index request_index(uu_id, id),
 	PRIMARY KEY(id),
     date timestamp default current_timestamp,
 	FOREIGN KEY (user) REFERENCES Users(id) 
 ); 
 
-CREATE TABLE IF NOT EXISTS RequestTagRelation(
-	request VARCHAR(40),
-	tag VARCHAR(50),
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
 	PRIMARY KEY (request, tag),
-	FOREIGN KEY (request) REFERENCES Requests(id),
-	FOREIGN KEY (tag) REFERENCES Tags(tag)
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
 );
 
-CREATE TABLE IF NOT EXISTS Responses(
-	id VARCHAR(40),
-	user VARCHAR(40),
-	request VARCHAR(40),
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
 	date timestamp default current_timestamp,
 	content TEXT,
+    index response_index(uu_id, id),
 	PRIMARY KEY(id),
 	FOREIGN KEY (user) REFERENCES Users(id),
-	FOREIGN KEY (request) REFERENCES Requests(id)
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
 );
 
 
-CREATE TABLE IF NOT EXISTS VerifiedBy(
-	user VARCHAR(40),
-	request	VARCHAR(40),
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
 	PRIMARY KEY (user, request),
 	FOREIGN KEY (user) REFERENCES Users(id),
-	FOREIGN KEY (request) REFERENCES Requests(id)
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
 	
 );
-*/
+
 /*
 	***********************************  extended database **********************************
 */
