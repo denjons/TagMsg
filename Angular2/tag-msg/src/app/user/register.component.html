@@ -1,0 +1,32 @@
+<div id = "header">
+    <div id="headqer_content">
+        
+        <div id="slogan">
+            <h2 class="white_text">
+                Anonymous, crowd sourced translation 
+            </h2>
+
+            <p class="white_text">
+                Have words, phrases, slang, and expressions translated by crowds of profficient or native speaker of the language. Help fellow language learners by making your own knowledge available to them. 
+            </p>
+        </div> 
+            
+        <div id="register" align="center">
+            <form id="register_form" (submit)="register($event, username.value)">
+                <table>
+                    <tr>
+                        <td>
+                            <input #username id="username" type="text" size="15">
+                        </td>
+                        <td>
+                            <button type="submit" class="enter_button">
+                                go
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                
+            </form>
+        </div>
+    </div>
+</div>
