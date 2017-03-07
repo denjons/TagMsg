@@ -1,14 +1,18 @@
 
-CREATE TABLE IF NOT EXISTS USERS (
-	id integer auto_increment,
-	date datetime,
-	PRIMARY KEY (id)
-);
 
 CREATE TABLE IF NOT EXISTS TAGS(
 	id integer auto_increment,
 	tag VARCHAR(50),
+    UNIQUE tag_u (tag),
     index tag_index (tag, id),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	uu_id VARCHAR(40),
+	date datetime,
+    index user_index(uu_id, id),
 	PRIMARY KEY (id)
 );
 
@@ -25,8 +29,8 @@ CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
 
 CREATE TABLE IF NOT EXISTS REQUESTS(
 	id integer  auto_increment,
+    uu_id VARCHAR(40),
 	user integer,
-	uu_id varchar(40),
 	content TEXT,
     index request_index(uu_id, id),
 	PRIMARY KEY(id),

@@ -46,7 +46,7 @@ create or replace view REQUESTS_VIEW_2 as
     from REQUESTS_TAG_RELATION group by request;
 
 create or replace view REQUESTS_VIEW as
-	select ReqTable.uu_id as uu_id, ReqTable.id as id,  ReqTable.user, ReqTable.content, tags, date from
+	select ReqTable.id as id, ReqTable.user, ReqTable.content, tags, date from
     REQUESTS_VIEW_1 as ReqTable
     join
     REQUESTS_VIEW_2 as TagTable

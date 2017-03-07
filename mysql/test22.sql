@@ -1,14 +1,14 @@
-set @uuid1 = UUID();
-set @uuid2 = UUID();
+insert into users (date) values(current_timestamp());
+select max(id) into @id1 from users;
+insert into users (date) values(current_timestamp());
+select max(id) into @id2 from users;
 
 
-insert into users (uu_id, date) values(@uuid1, current_timestamp());
-insert into users (uu_id, date) values(@uuid2, current_timestamp());
 
-call ADD_USER_TAG(@uuid1, 'tag1');
-call ADD_USER_TAG(@uuid2, 'tag1');
+call ADD_USER_TAG(@id1, 'tag1');
+call ADD_USER_TAG(@id2, 'tag1');
 
-CALL REMOVE_USER_TAG(@uuid1, 'tag1');
+CALL REMOVE_USER_TAG(@id1, 'tag1');
 
 SELECT * FROM USER_TAG_RELATION;
 

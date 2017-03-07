@@ -1,11 +1,11 @@
 
 DELIMITER //
-create function USER_EXISTS(userId integer) returns int
+create function USER_EXISTS(userId VARCHAR(40)) returns int
 begin
-	declare c int;
-	select count(*) into c from USERS where Users.id = userId;
-	if c > 0 then
-		return 1;
+	declare user_id int;
+	select id into user_id from USERS where Users.uu_id = userId;
+	if user_id > 0 then
+		return user_id;
 	else
 		return -1;
 	end if;
@@ -14,11 +14,11 @@ DELIMITER ;
 
 
 DELIMITER //
-create function USER_HAS_TAG(userId integer, tag_name VARCHAR(50)) returns int
+create function USER_HAS_TAG(userId VARCHAR(40), tag_name VARCHAR(50)) returns int
 begin
 	declare k int;
-	select count(*) into k from USER_TAG_RELATION where 
-	userId = USER_TAG_RELATION.user AND tag_name = HasTags.tag;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user AND tag_name = HasTags.tag;
 	if k > 0 then
 		return 1;
 	else
@@ -29,11 +29,11 @@ DELIMITER ;
 
 
 DELIMITER //
-create function USER_HAS_TAGS(userId integer) returns int
+create function USER_HAS_TAGS(userId VARCHAR(40)) returns int
 begin
 	declare k int;
-	select count(*) into k from USER_TAG_RELATION where 
-	userId = USER_TAG_RELATION.user;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user;
 	if k > 0 then
 		return 1;
 	else

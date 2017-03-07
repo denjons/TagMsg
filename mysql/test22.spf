@@ -1,0 +1,1252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>tm_db</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>-162195466267191154</string>
+			<key>name</key>
+			<string>127.0.0.1/tm</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>tm</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8</string>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoKgHCBMUFRYaIVUkbnVsbNMJCgsMDxJX
+			TlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6INDoACgAOiEBGABIAF
+			gAdUdHlwZVRyb3dzXxAdU2VsZWN0aW9uRGV0YWlsVHlwZU5TSW5k
+			ZXhTZXTSFwsYGVxOU1JhbmdlQ291bnQQAIAG0hscHR5aJGNsYXNz
+			bmFtZVgkY2xhc3Nlc1pOU0luZGV4U2V0oh8gWk5TSW5kZXhTZXRY
+			TlNPYmplY3TSGxwiI1xOU0RpY3Rpb25hcnmiIiBfEA9OU0tleWVk
+			QXJjaGl2ZXLRJidUZGF0YYABAAgAEQAaACMALQAyADcAQABGAE0A
+			VQBgAGcAagBsAG4AcQBzAHUAdwB8AIEAoQCmALMAtQC3ALwAxwDQ
+			ANsA3gDpAPIA9wEEAQcBGQEcASEAAAAAAAACAQAAAAAAAAAoAAAA
+			AAAAAAAAAAAAAAABIw==
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {694, 456}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>
+
+insert into users (date) values(current_timestamp());
+select max(id) into @id1 from users;
+insert into users (date) values(current_timestamp());
+select max(id) into @id2 from users;
+
+
+call ADD_USER_TAG(@id1, 'tag1');
+call ADD_USER_TAG(@id2, 'tag1');
+
+CALL REMOVE_USER_TAG(@id1, 'tag1');
+
+SELECT * FROM USER_TAG_RELATION;
+
+
+-- SELECT * FROM USERS;
+
+-- SELECT USER_EXISTS('82abd497-fde9-11e6-a066-00155d266400');
+
+-- call RemoveTagForUser(@uuid1, 'tag2');
+
+-- select * from tags;
+
+-- select TagExists('tag2');
+
+</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>209.5</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>create procedure CREATE_USER()
+BEGIN
+	set @uuid = UUID();
+	INSERT INTO USERS (uu_id, date) VALUES (@uuid, current_timestamp());
+	SELECT * FROM Users WHERE Users.id = @uuid;
+end;
+create procedure ADD_TAG(tag_name VARCHAR(50))
+BEGIN
+	IF TAG_EXISTS(tag_name)= -1 then 
+		insert into TAGS (tag) values (tag_name);
+	END IF;
+end;
+create procedure ADD_USER_TAG(user_id integer, tag_name VARCHAR(50))
+BEGIN
+	declare 
+    tag_id integer;
+	call ADD_TAG(tag_name);
+	set tag_id = TAG_EXISTS(tag_name);
+	if(user_id &gt; 0 &amp;&amp; tag_id &gt; 0) then
+		insert into USER_TAG_RELATION (user, tag) values(user_id, tag_id);
+	END IF;
+end;
+create procedure REMOVE_USER_TAG(user_id VARCHAR(40), tag_name VARCHAR(50))
+BEGIN
+	DECLARE
+    tag_id integer;
+
+    set tag_id = TAG_EXISTS(tag_name);
+    
+    if(tag_id &gt; 0 &amp;&amp; user_id &gt; 0) then
+		DELETE FROM USER_TAG_RELATION WHERE USER_TAG_RELATION.user = user_id AND USER_TAG_RELATION.tag = tag_id ;
+    end if;
+    
+end;
+create procedure ADD_REQUEST(user_id integer, content_input TEXT, req_id VARCHAR(40))
+begin
+    
+	if (REQUEST_EXISTS(req_id) = -1) then
+		insert into REQUESTS (uu_id, user, content) values (req_id, user_id, content_input) ;
+    else
+		signal sqlstate '20005';
+    end if ;
+    
+end;
+create procedure ADD_REQUEST_TAG(req_id VARCHAR(40), tag_id VARCHAR(50))
+begin
+	DECLARE
+    req_db_id integer;
+    DECLARE
+    tag_db_id integer;
+
+    call add_tag(tag_id);
+    
+    set req_db_id = REQUEST_EXISTS(req_id);
+    set tag_db_id = TAG_EXISTS(tag_id);
+    
+    IF(req_db_id = -1 || tag_db_id = -1) THEN
+		signal sqlstate '20008';
+	ELSEIF (REQUEST_HAS_TAG(req_db_id, tag_db_id) = -1) THEN
+		insert into requests_tag_relation (request, tag) values (req_db_id, tag_db_id) ;
+	ELSE
+		signal sqlstate '20007';
+	END IF ;
+    
+end;
+create procedure GET_USER_REQUESTS(user_id integer, requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+begin
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
+    
+	select * from REQUESTS_VIEW where user = user_id 
+    AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+	AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+	order by date DESC limit requestLimit offset requestOffset;
+    
+end;
+create procedure GET_ELIGIBLE_REQUESTS(userId integer, requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+begin
+
+    
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
+    
+    if(USER_HAS_TAGS(userId) = -1) then
+		select * from REQUESTS_VIEW
+        where userId != REQUESTS_VIEW.user
+        AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+        order by date DESC limit requestLimit offset requestOffset;
+    else
+		select table1.request as id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.tags as tags , REQUESTS_VIEW.date from
+		(select request from ELIGIBLE_VIEW where ELIGIBLE_VIEW.user = userId ) as table1
+		join 
+		REQUESTS_VIEW 
+		on 
+		REQUESTS_VIEW.id = table1.request AND NOT REQUESTS_VIEW.user = userId
+        AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+		ORDER BY REQUESTS_VIEW.date DESC
+		LIMIT requestLimit offset requestOffset;
+    end if;
+end;
+create procedure GET_REQUESTS_FROM_TAGS(tags TEXT, requestLimit int, requestOffset int, startDate TimeStamp, endDate Timestamp)
+begin
+	
+    SET @tags = tags;
+    SET @limit = requestLimit;
+    SET @offset = requestOffset;
+    SET @startDate = startDate;
+    SET @endDate = endDate;
+    
+    SET @Query = concat(
+    'select REQUESTS_VIEW.id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.date, REQUESTS_VIEW.tags',
+    ' from OfTag join REQUESTS_VIEW on',
+    ' OfTag.tag in (?)',
+    ' AND (? &lt;= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND (? &gt;= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND REQUESTS_VIEW.id = OfTag.request',
+    ' limit ? offset ?;');
+    
+    PREPARE stmt FROM @query;
+	EXECUTE stmt using 
+    @tags, @startDate, @startDate, @endDate, @endDate, @limit, @offset;
+    
+end;
+create procedure ADD_RESPONSE_TO_REQUEST(user_id integer, resp_id varchar(40), resp_content TEXT, req_id varchar(40))
+begin
+	/* if user does not exist*/
+	declare req_db_id integer;
+
+	set req_db_id = REQUEST_EXISTS(req_id);
+    
+	if (RESPONSE_EXISTS(resp_id) = -1) then
+		insert into RESPONSES (id, user, request, content) values (resp_id, responder, req_id, resp_content) ;
+    else
+		/* upadte response */
+        update RESPONSES set content = resp_content where RESPONSES.id = req_db_id AND RESPONSES.user = user_id;
+    end if;
+
+end;
+create procedure GET_RESPONSES_FOR_REQUESTS( reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
+begin 
+
+	declare req_db_id int;
+	set @startDate = GET_RESPONSE_DATE(fromResponse);
+    set @endDate = GET_RESPONSE_DATE(beforeResponse);
+    set req_db_id = REQUEST_EXISTS(reqId);
+    
+	select * from RESPONSES where  RESPONSES.request = req_db_id
+    AND (@startDate &lt;= RESPONSES.date OR @startDate IS NULL)
+	AND (@endDate &gt;= RESPONSES.date OR @endDate IS NULL)
+	order by date DESC limit responseLimit offset responseOffset;
+end</string>
+		<string>/*
+	maps requests tags and users tags
+    used by eligible view
+*/
+create or replace view USER_REQUEST_VIEW as
+	select user, request, REQUESTS_TAG_RELATION.tag as tag  from
+	USER_TAG_RELATION
+	join
+	REQUESTS_TAG_RELATION 
+    on USER_TAG_RELATION.tag = REQUESTS_TAG_RELATION.tag;
+/*
+	finds all eligible users (users that have all the tags) for all requests
+*/	
+create or replace view ELIGIBLE_VIEW_1 as
+	select user, request, count(tag) as tags
+	from USER_REQUEST_VIEW
+	group by user, request;
+create or replace view ELIGIBLE_VIEW_2 as
+	select request, count(tag) as tags 
+    from REQUESTS_TAG_RELATION
+    group by request;
+create or replace view ELIGIBLE_VIEW as
+	select user, view1.request as request from
+	ELIGIBLE_VIEW_1 as view1
+    join
+    ELIGIBLE_VIEW_2 as view2
+    on 
+    view1.request = view2.request 
+    AND 
+    view1.tags = view2.tags
+    order by user asc;
+/* gets all requests for something
+*/
+create or replace view REQUESTS_VIEW_1 as 
+	select * from REQUESTS;
+create or replace view REQUESTS_VIEW_2 as 
+	select request, GROUP_CONCAT((SELECT TAG FROM TAGS WHERE ID = REQUESTS_TAG_RELATION.tag) SEPARATOR ',') as tags 
+    from REQUESTS_TAG_RELATION group by request;
+create or replace view REQUESTS_VIEW as
+	select ReqTable.id as id, ReqTable.user, ReqTable.content, tags, date from
+    REQUESTS_VIEW_1 as ReqTable
+    join
+    REQUESTS_VIEW_2 as TagTable
+    on ReqTable.id = TagTable.request</string>
+		<string>create function USER_EXISTS(userId integer) returns int
+begin
+	declare c int;
+	select count(*) into c from USERS where Users.id = userId;
+	if c &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function USER_HAS_TAG(userId integer, tag_name VARCHAR(50)) returns int
+begin
+	declare k int;
+	select count(*) into k from USER_TAG_RELATION where 
+	userId = USER_TAG_RELATION.user AND tag_name = HasTags.tag;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function USER_HAS_TAGS(userId integer) returns int
+begin
+	declare k int;
+	select count(*) into k from USER_TAG_RELATION where 
+	userId = USER_TAG_RELATION.user;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function TAG_EXISTS(tag_name VARCHAR(50)) returns int
+begin
+	DECLARE tag_id int;
+    select id into tag_id from TAGS where Tags.tag = tag_name ;
+    if tag_id &gt; 0 then 
+		return tag_id ;
+	else
+		return -1 ;
+    end if ;
+    
+end;
+create function REQUEST_EXISTS(req_id VARCHAR(40)) returns int
+begin
+	declare db_id int;
+    select id into db_id from REQUESTS where REQUESTS.uu_id = req_id ;
+    if db_id &gt; 0 then
+		return db_id;
+	else
+		return -1;
+	end if ;
+end;
+create function REQUEST_HAS_TAG(req_id integer, tag_id integer) returns int
+begin
+	declare c int;
+    select count(*) into c from requests_tag_relation where requests_tag_relation.request = req_id AND requests_tag_relation.tag = tag_id;
+    if c &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if ;
+end;
+create function OWNER_OF_REQUEST(user VARCHAR(40), reqId VARCHAR(40)) returns int
+begin
+	declare c int;
+	select count(*) into c from REQUESTS where REQUESTS.id = reqId AND REQUESTS.user = user;
+    if c &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if ;
+end;
+create function GET_REQUEST_DATE(req_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(REQUEST_EXISTS(req_id) = 1) then
+		select date into @date from REQUESTS where REQUESTS.uu_id = req_id;
+	end if;
+    return @date;
+end;
+create function RESPONSE_EXISTS(resp_id VARCHAR(40)) returns int
+begin
+	declare db_id int;
+    select id into db_id from RESPONSES where RESPONSES.uu_id = resp_id ;
+    if db_id &gt; 0 then
+		return db_id;
+	else
+		return -1;
+	end if ;
+end;
+create function GET_RESPONSE_DATE(resp_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(RESPONSE_EXISTS(resp_id) = 1) then
+		select date into @date from RESPONSES where RESPONSES.uu_id = resp_id;
+	end if;
+    return @date;
+end</string>
+		<string>CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	date datetime,
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
+	tag VARCHAR(50),
+    index tag_index (tag, id),
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+	user integer,
+	uu_id varchar(40),
+	content TEXT,
+    index request_index(uu_id, id),
+	PRIMARY KEY(id),
+    date timestamp default current_timestamp,
+	FOREIGN KEY (user) REFERENCES Users(id) 
+);
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
+	PRIMARY KEY (request, tag),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
+	date timestamp default current_timestamp,
+	content TEXT,
+    index response_index(uu_id, id),
+	PRIMARY KEY(id),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+);
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
+	PRIMARY KEY (user, request),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+	
+);
+/*
+	***********************************  extended database **********************************
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS Images(
+	id VARCHAR(40),
+	image BLOB, 
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS RegUsers (
+	id VARCHAR(40),
+	email VARCHAR(100) unique,
+	username VARCHAR(25) unique,
+	password varchar(25),
+	user_key VARCHAR(40),
+	date timestamp default current_timestamp,
+    FOREIGN KEY (id) REFERENCES Users(id),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserImages(
+	user VARCHAR(40),
+	image VARCHAR(40),
+	PRIMARY KEY (user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (image) REFERENCES Images(id)
+);
+*/</string>
+		<string>CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	date datetime,
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
+	tag VARCHAR(50),
+    index tag_index (tag, id),
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+	user integer,
+	content TEXT,
+    index request_index(uu_id, id),
+	PRIMARY KEY(id),
+    date timestamp default current_timestamp,
+	FOREIGN KEY (user) REFERENCES Users(id) 
+);
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
+	PRIMARY KEY (request, tag),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
+	date timestamp default current_timestamp,
+	content TEXT,
+    index response_index(uu_id, id),
+	PRIMARY KEY(id),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+);
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
+	PRIMARY KEY (user, request),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+	
+);
+/*
+	***********************************  extended database **********************************
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS Images(
+	id VARCHAR(40),
+	image BLOB, 
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS RegUsers (
+	id VARCHAR(40),
+	email VARCHAR(100) unique,
+	username VARCHAR(25) unique,
+	password varchar(25),
+	user_key VARCHAR(40),
+	date timestamp default current_timestamp,
+    FOREIGN KEY (id) REFERENCES Users(id),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserImages(
+	user VARCHAR(40),
+	image VARCHAR(40),
+	PRIMARY KEY (user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (image) REFERENCES Images(id)
+);
+*/</string>
+		<string>CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	date datetime,
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
+	tag VARCHAR(50),
+    index tag_index (tag, id),
+	PRIMARY KEY (tag)
+);
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+	user integer,
+	content TEXT,
+    index request_index(uu_id, id),
+	PRIMARY KEY(id),
+    date timestamp default current_timestamp,
+	FOREIGN KEY (user) REFERENCES Users(id) 
+);
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
+	PRIMARY KEY (request, tag),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
+	date timestamp default current_timestamp,
+	content TEXT,
+    index response_index(uu_id, id),
+	PRIMARY KEY(id),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+);
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
+	PRIMARY KEY (user, request),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+	
+);
+/*
+	***********************************  extended database **********************************
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS Images(
+	id VARCHAR(40),
+	image BLOB, 
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS RegUsers (
+	id VARCHAR(40),
+	email VARCHAR(100) unique,
+	username VARCHAR(25) unique,
+	password varchar(25),
+	user_key VARCHAR(40),
+	date timestamp default current_timestamp,
+    FOREIGN KEY (id) REFERENCES Users(id),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserImages(
+	user VARCHAR(40),
+	image VARCHAR(40),
+	PRIMARY KEY (user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (image) REFERENCES Images(id)
+);
+*/</string>
+		<string>use tm_db</string>
+		<string>create database tm_db</string>
+		<string>drop database tm_db</string>
+		<string>CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
+	tag VARCHAR(50),
+    UNIQUE tag_u (tag),
+    index tag_index (tag, id),
+	PRIMARY KEY (tag)
+);
+CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	UNIQUE user_u(id),
+	uu_id VARCHAR(40),
+	date datetime,
+	PRIMARY KEY (uu_id)
+);
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+    uu_id VARCHAR(40),
+	user integer,
+	content TEXT,
+    index request_index(uu_id, id),
+	PRIMARY KEY(id),
+    date timestamp default current_timestamp,
+	FOREIGN KEY (user) REFERENCES Users(id) 
+);
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
+	PRIMARY KEY (request, tag),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
+	date timestamp default current_timestamp,
+	content TEXT,
+    index response_index(uu_id, id),
+	PRIMARY KEY(id),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+);
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
+	PRIMARY KEY (user, request),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+	
+);
+/*
+	***********************************  extended database **********************************
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS Images(
+	id VARCHAR(40),
+	image BLOB, 
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS RegUsers (
+	id VARCHAR(40),
+	email VARCHAR(100) unique,
+	username VARCHAR(25) unique,
+	password varchar(25),
+	user_key VARCHAR(40),
+	date timestamp default current_timestamp,
+    FOREIGN KEY (id) REFERENCES Users(id),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserImages(
+	user VARCHAR(40),
+	image VARCHAR(40),
+	PRIMARY KEY (user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (image) REFERENCES Images(id)
+);
+*/</string>
+		<string>drop database tm_db;
+create database tm_db;
+use tm_db</string>
+		<string>select * from users</string>
+		<string>create procedure GET_RESPONSES_FOR_REQUESTS(user VARCHAR(40), reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
+begin 
+
+	declare req_db_id int;
+	set @startDate = GET_RESPONSE_DATE(fromResponse);
+    set @endDate = GET_RESPONSE_DATE(beforeResponse);
+    set req_db_id = REQUEST_EXISTS(reqId);
+    
+	select * from RESPONSES where  RESPONSES.request = req_db_id
+    AND (@startDate &lt;= RESPONSES.date OR @startDate IS NULL)
+	AND (@endDate &gt;= RESPONSES.date OR @endDate IS NULL)
+	order by date DESC limit responseLimit offset responseOffset;
+end</string>
+		<string>create procedure GET_RESPONSES_FOR_REQUESTS(user VARCHAR(40), reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
+begin 
+
+	declare req_db_id int;
+	set @startDate = GET_RESPONSE_DATE(fromResponse);
+    set @endDate = GET_RESPONSE_DATE(beforeResponse);
+    req_db_id = REQUEST_EXISTS(reqId);
+    
+	select * from RESPONSES where  RESPONSES.request = req_db_id
+    AND (@startDate &lt;= RESPONSES.date OR @startDate IS NULL)
+	AND (@endDate &gt;= RESPONSES.date OR @endDate IS NULL)
+	order by date DESC limit responseLimit offset responseOffset;
+end</string>
+		<string>create procedure CREATE_USER()
+BEGIN
+	set @uuid = UUID();
+	INSERT INTO USERS (uu_id, date) VALUES (@uuid, current_timestamp());
+	SELECT * FROM Users WHERE Users.id = @uuid;
+end;
+create procedure ADD_TAG(tag_name VARCHAR(50))
+BEGIN
+	IF TAG_EXISTS(tag_name)= -1 then 
+		insert into TAGS (tag) values (tag_name);
+	END IF;
+end;
+create procedure ADD_USER_TAG(user varchar(40), tag_name VARCHAR(50))
+BEGIN
+	declare 
+    tag_id integer;
+    declare 
+    user_id integer;
+	call ADD_TAG(tag_name);
+    set user_id = USER_EXISTS(user);
+	set tag_id = TAG_EXISTS(tag_name);
+	if(user_id &gt; 0 &amp;&amp; tag_id &gt; 0) then
+		insert into USER_TAG_RELATION (user, tag) values(user_id, tag_id);
+	END IF;
+end;
+create procedure REMOVE_USER_TAG(user VARCHAR(40), tag_name VARCHAR(50))
+BEGIN
+	DECLARE
+    tag_id integer;
+    DECLARE
+    user_id integer;
+
+    set tag_id = TAG_EXISTS(tag_name);
+    set user_id = USER_EXISTS(user);
+    
+    if(tag_id &gt; 0 &amp;&amp; user_id &gt; 0) then
+		DELETE FROM USER_TAG_RELATION WHERE USER_TAG_RELATION.user = user_id AND USER_TAG_RELATION.tag = tag_id ;
+    end if;
+    
+end;
+create procedure ADD_REQUEST(user VARCHAR(40), content_input TEXT, req_id VARCHAR(40))
+begin
+
+    DECLARE
+    user_id integer;
+
+    set user_id = USER_EXISTS(user);
+    
+	if(user_id = -1) then 
+		signal sqlstate '20001';
+	end if;
+    
+	if (REQUEST_EXISTS(req_id) = -1) then
+		insert into REQUESTS (uu_id, user, content) values (req_id, user_id, content_input) ;
+    else
+		signal sqlstate '20005';
+    end if ;
+    
+end;
+create procedure ADD_REQUEST_TAG(req_id VARCHAR(40), tag_id VARCHAR(50))
+begin
+	DECLARE
+    req_db_id integer;
+    DECLARE
+    tag_db_id integer;
+
+    call add_tag(tag_id);
+    
+    set req_db_id = REQUEST_EXISTS(req_id);
+    set tag_db_id = TAG_EXISTS(tag_id);
+    
+    IF(req_db_id = -1 || tag_db_id = -1) THEN
+		signal sqlstate '20008';
+	ELSEIF (REQUEST_HAS_TAG(req_db_id, tag_db_id) = -1) THEN
+		insert into requests_tag_relation (request, tag) values (req_db_id, tag_db_id) ;
+	ELSE
+		signal sqlstate '20007';
+	END IF ;
+    
+end;
+create procedure GET_USER_REQUESTS(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+begin
+	DECLARE
+    user_db_id integer;
+    
+    set user_db_id = USER_EXISTS(userId);
+    
+	if(user_db_id = -1) then 
+		signal sqlstate '20001';
+	end if;
+    
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
+    
+	select * from REQUESTS_VIEW where user = user_db_id 
+    AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+	AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+	order by date DESC limit requestLimit offset requestOffset;
+    
+end;
+create procedure GET_ELIGIBLE_REQUESTS(userId VARCHAR(40), requestLimit int, requestOffset int, fromRequest VARCHAR(40), beforeRequest VARCHAR(40))
+begin
+	if(userExists(userId) = -1) then 
+		signal sqlstate '20001';
+	end if;
+    
+    set @startDate = GET_REQUEST_DATE(fromRequest);
+    set @endDate = GET_REQUEST_DATE(beforeRequest);
+    
+    if(USER_HAS_TAGS(userId) = -1) then
+		select * from REQUESTS_VIEW
+        where userId != REQUESTS_VIEW.user
+        AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+        order by date DESC limit requestLimit offset requestOffset;
+    else
+		select table1.request as id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.tags as tags , REQUESTS_VIEW.date from
+		(select request from ELIGIBLE_VIEW where ELIGIBLE_VIEW.user = userId ) as table1
+		join 
+		REQUESTS_VIEW 
+		on 
+		REQUESTS_VIEW.id = table1.request AND NOT REQUESTS_VIEW.user = userId
+        AND (@startDate &lt;= REQUESTS_VIEW.date OR @startDate IS NULL)
+        AND (@endDate &gt;= REQUESTS_VIEW.date OR @endDate IS NULL)
+		ORDER BY REQUESTS_VIEW.date DESC
+		LIMIT requestLimit offset requestOffset;
+    end if;
+end;
+create procedure GET_REQUESTS_FROM_TAGS(tags TEXT, requestLimit int, requestOffset int, startDate TimeStamp, endDate Timestamp)
+begin
+	
+    SET @tags = tags;
+    SET @limit = requestLimit;
+    SET @offset = requestOffset;
+    SET @startDate = startDate;
+    SET @endDate = endDate;
+    
+    SET @Query = concat(
+    'select REQUESTS_VIEW.id, REQUESTS_VIEW.user, REQUESTS_VIEW.content, REQUESTS_VIEW.date, REQUESTS_VIEW.tags',
+    ' from OfTag join REQUESTS_VIEW on',
+    ' OfTag.tag in (?)',
+    ' AND (? &lt;= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND (? &gt;= REQUESTS_VIEW.date OR ? IS NULL)',
+    ' AND REQUESTS_VIEW.id = OfTag.request',
+    ' limit ? offset ?;');
+    
+    PREPARE stmt FROM @query;
+	EXECUTE stmt using 
+    @tags, @startDate, @startDate, @endDate, @endDate, @limit, @offset;
+    
+end;
+create procedure ADD_RESPONSE_TO_REQUEST(responder VARCHAR(40), resp_id varchar(40), resp_content TEXT, req_id varchar(40))
+begin
+	/* if user does not exist*/
+	declare user_db_id integer;
+	declare req_db_id integer;
+
+	set req_db_id = REQUEST_EXISTS(req_id);
+	set user_db_id = USER_EXISTS(responder);
+    
+	if(req_db_id &gt; 0) then
+		if (RESPONSE_EXISTS(resp_id) = -1) then
+			insert into RESPONSES (id, user, request, content) values (resp_id, responder, req_id, resp_content) ;
+        else
+			/* upadte response */
+            update RESPONSES set content = resp_content where RESPONSES.id = req_db_id AND RESPONSES.user = user_db_id;
+        end if;
+    else
+		/* if request does not exist*/
+		signal sqlstate '20008';
+    end if ;
+end;
+create procedure GET_RESPONSES_FOR_REQUESTS(user VARCHAR(40), reqId varchar(40), responseLimit int, responseOffset int, fromResponse VARCHAR(40), beforeResponse VARCHAR(40))
+begin 
+
+	declare req_db_id int;
+	set @startDate = GET_RESPONSE_DATE(fromResponse);
+    set @endDate = GET_RESPONSE_DATE(beforeResponse);
+    req_db_id = 
+    
+	select * from RESPONSES where  RESPONSES.request = req_db_id
+    AND (@startDate &lt;= RESPONSES.date OR @startDate IS NULL)
+	AND (@endDate &gt;= RESPONSES.date OR @endDate IS NULL)
+	order by date DESC limit responseLimit offset responseOffset;
+end</string>
+		<string>create function USER_EXISTS(userId VARCHAR(40)) returns int
+begin
+	declare user_id int;
+	select id into user_id from USERS where Users.uu_id = userId;
+	if user_id &gt; 0 then
+		return user_id;
+	else
+		return -1;
+	end if;
+end;
+create function USER_HAS_TAG(userId VARCHAR(40), tag_name VARCHAR(50)) returns int
+begin
+	declare k int;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user AND tag_name = HasTags.tag;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function USER_HAS_TAGS(userId VARCHAR(40)) returns int
+begin
+	declare k int;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function TAG_EXISTS(tag_name VARCHAR(50)) returns int
+begin
+	DECLARE tag_id int;
+    select id into tag_id from TAGS where Tags.tag = tag_name ;
+    if tag_id &gt; 0 then 
+		return tag_id ;
+	else
+		return -1 ;
+    end if ;
+    
+end;
+create function REQUEST_EXISTS(req_id VARCHAR(40)) returns int
+begin
+	declare db_id int;
+    select id into db_id from REQUESTS where REQUESTS.uu_id = req_id ;
+    if db_id &gt; 0 then
+		return db_id;
+	else
+		return -1;
+	end if ;
+end;
+create function REQUEST_HAS_TAG(req_id integer, tag_id integer) returns int
+begin
+	declare c int;
+    select count(*) into c from requests_tag_relation where requests_tag_relation.request = req_id AND requests_tag_relation.tag = tag_id;
+    if c &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if ;
+end;
+create function OWNER_OF_REQUEST(user VARCHAR(40), reqId VARCHAR(40)) returns int
+begin
+	declare c int;
+	select count(*) into c from REQUESTS where REQUESTS.id = reqId AND REQUESTS.user = user;
+    if c &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if ;
+end;
+create function GET_REQUEST_DATE(req_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(REQUEST_EXISTS(req_id) = 1) then
+		select date into @date from REQUESTS where REQUESTS.uu_id = req_id;
+	end if;
+    return @date;
+end;
+create function RESPONSE_EXISTS(resp_id VARCHAR(40)) returns int
+begin
+	declare db_id int;
+    select id into db_id from RESPONSES where RESPONSES.uu_id = resp_id ;
+    if db_id &gt; 0 then
+		return db_id;
+	else
+		return -1;
+	end if ;
+end;
+create function GET_RESPONSE_DATE(resp_id VARCHAR(40)) returns timestamp
+begin
+	set @date = null;
+    if(RESPONSE_EXISTS(resp_id) = 1) then
+		select date into @date from RESPONSES where RESPONSES.uu_id = resp_id;
+	end if;
+    return @date;
+end</string>
+		<string>CREATE TABLE IF NOT EXISTS TAGS(
+	id integer auto_increment,
+	tag VARCHAR(50),
+    UNIQUE tag_u (tag),
+    index tag_index (tag, id),
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS USERS (
+	id integer auto_increment,
+	uu_id VARCHAR(40),
+	date datetime,
+    index user_index(uu_id, id),
+	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS USER_TAG_RELATION(
+	user integer,
+	tag integer,
+	UNIQUE usertag_u (tag, user),
+    index usertag_index (tag, user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS REQUESTS(
+	id integer  auto_increment,
+    uu_id VARCHAR(40),
+	user integer,
+	content TEXT,
+    index request_index(uu_id, id),
+	PRIMARY KEY(id),
+    date timestamp default current_timestamp,
+	FOREIGN KEY (user) REFERENCES Users(id) 
+);
+CREATE TABLE IF NOT EXISTS REQUESTS_TAG_RELATION(
+	request integer,
+	tag integer,
+	PRIMARY KEY (request, tag),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id),
+	FOREIGN KEY (tag) REFERENCES Tags(id)
+);
+CREATE TABLE IF NOT EXISTS RESPONSES(
+	id integer  auto_increment,
+	uu_id VARCHAR(40),
+	user integer,
+	request integer,
+	date timestamp default current_timestamp,
+	content TEXT,
+    index response_index(uu_id, id),
+	PRIMARY KEY(id),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+);
+CREATE TABLE IF NOT EXISTS VERIFIED_BY(
+	user integer,
+	request	integer,
+	PRIMARY KEY (user, request),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (request) REFERENCES REQUESTS(id)
+	
+);
+/*
+	***********************************  extended database **********************************
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS Images(
+	id VARCHAR(40),
+	image BLOB, 
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS RegUsers (
+	id VARCHAR(40),
+	email VARCHAR(100) unique,
+	username VARCHAR(25) unique,
+	password varchar(25),
+	user_key VARCHAR(40),
+	date timestamp default current_timestamp,
+    FOREIGN KEY (id) REFERENCES Users(id),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserImages(
+	user VARCHAR(40),
+	image VARCHAR(40),
+	PRIMARY KEY (user),
+	FOREIGN KEY (user) REFERENCES Users(id),
+	FOREIGN KEY (image) REFERENCES Images(id)
+);
+*/</string>
+		<string>drop database tm;
+create database tm_db;
+use tm_db</string>
+		<string>create procedure CREATE_USER()
+BEGIN
+	set @uuid = UUID();
+	INSERT INTO USERS (uu_id, date) VALUES (@uuid, current_timestamp());
+	SELECT * FROM Users WHERE Users.id = @uuid;
+end;
+create procedure ADD_USER_TAG(user varchar(40), tag_name VARCHAR(50))
+BEGIN
+	declare 
+    tag_id integer;
+    declare 
+    user_id integer;
+	IF TAG_EXISTS(tag_name) = -1 then 
+		insert into TAGS (tag) values (tag_name);
+        set tag_id = TAG_EXISTS(tag_name);
+        set user_id = USER_EXISTS(user);
+        if(user_id &gt; 0 &amp;&amp; tag_id &gt; 0) then
+			insert into USER_TAG_RELATION (user, tag) values(user_id, tag_id);
+		end if;
+	END IF;
+end;
+create procedure REMOVE_USER_TAG(user VARCHAR(40), tag_name VARCHAR(50))
+BEGIN
+	DECLARE
+    tag_id integer;
+    DECLARE
+    user_id integer;
+
+    set tag_id = TAG_EXISTS(tag_name);
+    set user_id = USER_EXISTS(user);
+    
+    if(tag_id &gt; 0 &amp;&amp; user_id &gt; 0) then
+		DELETE FROM USER_TAG_RELATION WHERE USER_TAG_RELATION.user = user_id AND USER_TAG_RELATION.tag = tag_id ;
+    end if;
+    
+end</string>
+		<string>create function USER_EXISTS(userId VARCHAR(40)) returns int
+begin
+	declare user_id int;
+	select id into user_id from USERS where Users.uu_id = userId;
+	if user_id &gt; 0 then
+		return user_id;
+	else
+		return -1;
+	end if;
+end;
+create function userHasTag(userId VARCHAR(40), tag_name VARCHAR(50)) returns int
+begin
+	declare k int;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user AND tag_name = HasTags.tag;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function userHasTags(userId VARCHAR(40)) returns int
+begin
+	declare k int;
+	select count(*) into k from HasTags where 
+	userId = HasTags.user;
+	if k &gt; 0 then
+		return 1;
+	else
+		return -1;
+	end if;
+end;
+create function TAG_EXISTS(tag_name VARCHAR(50)) returns int
+begin
+	DECLARE tag_id int;
+    select id into tag_id from TAGS where Tags.tag = tag_name ;
+    if tag_id &gt; 0 then 
+		return tag_id ;
+	else
+		return -1 ;
+    end if ;
+    
+end</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.7.17</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>
