@@ -4,62 +4,46 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Users")
 public class User {
-	
-	@Id
-	@Column(name = "id")
-	private int id;
-	
-	@Column(name = "uu_id")
-	private String uu_id;
-	
-	@Column(name = "date")
-	private Date date;
 
-	public User() {
-		super();
-	}
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-	public User(String uu_id, Date date) {
-		super();
-		this.uu_id = uu_id;
-		this.date = date;
-	}
+    @Column(name = "date")
+    private Date date;
 
-	public User(String uu_id) {
-		super();
-		this.uu_id = uu_id;
-	}
+    public User() {
+	super();
+    }
 
-	public int getId() {
-		return id;
-	}
+    public User(Date date) {
+	super();
+	this.date = date;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+	return id;
+    }
 
-	public String getUu_id() {
-		return uu_id;
-	}
+    public void setId(int id) {
+	this.id = id;
+    }
 
-	public void setUu_id(String uu_id) {
-		this.uu_id = uu_id;
-	}
+    public Date getDate() {
+	return date;
+    }
 
-	public Date getDate() {
-		return date;
-	}
+    public void setDate(Date date) {
+	this.date = date;
+    }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	
-	
 }

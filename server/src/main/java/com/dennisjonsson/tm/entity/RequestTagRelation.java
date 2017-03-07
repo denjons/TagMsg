@@ -1,42 +1,43 @@
 package com.dennisjonsson.tm.entity;
 
-//@Entity
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+@IdClass(RequestTagRelation.class)
+@Table(name = "REQUEST_TAG_RELATION")
 public class RequestTagRelation {
-	
-	//@NotNull
-	private String request;
-	
-	//@NotNull
-	private String tag;
-	
-	
-	public RequestTagRelation() {
-		super();
-	}
-	
-	public RequestTagRelation(String request, String tag) {
-		super();
-		this.request = request;
-		this.tag = tag;
-	}
 
+    @NotNull
+    private int request;
 
-	public String getRequest() {
-		return request;
-	}
+    @NotNull
+    private String tag;
 
-	public void setRequest(String request) {
-		this.request = request;
-	}
+    public RequestTagRelation(int request, String tag) {
+	super();
+	this.request = request;
+	this.tag = tag;
+    }
 
-	public String getTag() {
-		return tag;
-	}
+    public RequestTagRelation() {
+	super();
+    }
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-	
-	
+    public int getRequest() {
+	return request;
+    }
+
+    public void setRequest(int request) {
+	this.request = request;
+    }
+
+    public String getTag() {
+	return tag;
+    }
+
+    public void setTag(String tag) {
+	this.tag = tag;
+    }
 
 }

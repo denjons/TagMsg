@@ -9,6 +9,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 
+import com.dennisjonsson.tm.service.CSTServiceException;
 import com.dennisjonsson.tm.service.UserValidationService;
 
 /*
@@ -34,8 +35,16 @@ public class JWTTokenFilter implements ContainerRequestFilter {
 	}
 
 	if (!authString.equalsIgnoreCase("test_app_key")) {
-	    String userId = userValidationService.identifyUser(authString);
-	    ctx.getHeaders().add("AUTHORIZED-ID", userId);
+
+	    long userId;
+	    try {
+		userId = userValidationService.identifyUser(authString);
+	    } catch (CSTServiceException e) {
+		e.printStackTrace();
+		throw new NotAuthorizedException(e);
+	    }
+
+	    ctx.getHeaders().add("AUTHORIZED-ID", String.valueOf(userId));
 	}
 
 	// TODO: use appropriate tool for generating token

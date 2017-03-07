@@ -5,22 +5,33 @@ import java.util.HashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.NotAuthorizedException;
 
+import com.dennisjonsson.tm.entity.User;
 import com.dennisjonsson.tm.util.JWTToken;
 
 @ApplicationScoped
 public class UserValidationService extends DataSource {
 
-    public String identifyUser(String auth) {
-
-	String id = "test-user-id-123456789123456789";
+    public int identifyUser(String auth) throws CSTServiceException {
 
 	HashMap<String, Object> claims = JWTToken.parseJWT(auth);
 
+	int id = Integer.parseInt(claims.get(JWTToken.ID).toString());
 	// do database lookups or whatever
-	if (!claims.get(JWTToken.ID).toString().equals(id)) {
+	if (!checkUser(id)) {
 	    throw new NotAuthorizedException("invalid app key: " + "'" + claims.get(JWTToken.ID) + "'");
 	}
 
-	return claims.get(JWTToken.ID).toString();
+	return id;
+    }
+
+    private boolean checkUser(int userId) throws CSTServiceException {
+	beginTransaction();
+
+	User user = em.find(User.class, userId);
+
+	endTransaction();
+
+	return user != null;
+
     }
 }

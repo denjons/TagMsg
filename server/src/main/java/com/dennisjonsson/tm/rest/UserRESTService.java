@@ -17,9 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.dennisjonsson.tm.application.TMAppConstants;
-import com.dennisjonsson.tm.client.UserDTO;
 import com.dennisjonsson.tm.client.UserTagListDTO;
-import com.dennisjonsson.tm.data.UserTransformer;
 import com.dennisjonsson.tm.entity.User;
 import com.dennisjonsson.tm.rest.provider.JWTTokenAutorization;
 import com.dennisjonsson.tm.service.CSTServiceException;
@@ -51,12 +49,9 @@ public class UserRESTService {
 
 	try {
 	    User user = UserCreationService.createUser();
-	    UserDTO newUser = UserTransformer.toUserDTO(user);
 
-	    Response.ResponseBuilder builder = Response.ok(newUser)
-
-		    .header(HttpHeaders.AUTHORIZATION,
-			    JWTToken.createWebToken(newUser.id, TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
+	    Response.ResponseBuilder builder = Response.ok().header(HttpHeaders.AUTHORIZATION,
+		    JWTToken.createWebToken(user.getId(), TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
 	    return builder.build();
 
 	} catch (CSTServiceException e) {

@@ -2,7 +2,6 @@ package com.dennisjonsson.tm.service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.ParameterMode;
@@ -21,8 +20,11 @@ public class UserService extends DataSource {
 
 	beginTransaction();
 
-	user = new User(UUID.randomUUID().toString(), new Date());
+	user = new User(new Date());
+
 	em.persist(user);
+
+	em.flush();
 
 	endTransaction();
 

@@ -12,9 +12,6 @@ public class RequestDTO {
     public String id;
 
     @NotNull
-    public UserDTO user;
-
-    @NotNull
     public String content;
 
     @NotNull
@@ -22,10 +19,9 @@ public class RequestDTO {
 
     public String date;
 
-    public RequestDTO(String id, UserDTO user, String content, ArrayList<String> tags, String date) {
+    public RequestDTO(String id, String content, ArrayList<String> tags, String date) {
 	super();
 	this.id = id;
-	this.user = user;
 	this.content = content;
 	this.tags = tags;
 	this.date = date;

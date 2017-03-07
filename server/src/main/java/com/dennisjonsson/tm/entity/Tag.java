@@ -9,30 +9,36 @@ import javax.validation.constraints.NotNull;
 @Table(name = "tags")
 public class Tag {
 
-	@Id
-	long id;
-	
-	@NotNull
-	String tag;
+    @Id
+    long id;
 
-	public Tag() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    @NotNull
+    String tag;
 
-	public Tag(String tag) {
-		super();
-		this.tag = tag;
-	}
+    public Tag() {
+	super();
+	// TODO Auto-generated constructor stub
+    }
 
-	public String getTag() {
-		return tag;
-	}
+    public Tag(String tag) {
+	super();
+	this.tag = tag;
+    }
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-	
-	
+    public String getTag() {
+	return tag;
+    }
+
+    public void setTag(String tag) {
+	this.tag = tag;
+    }
+
+    public long getId() {
+	return id;
+    }
+
+    public void setId(long id) {
+	this.id = id;
+    }
 
 }

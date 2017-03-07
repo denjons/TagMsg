@@ -36,7 +36,7 @@ public class JWTToken {
      * String jwt = jws.getCompactSerialization() }
      */
 
-    public static String createWebToken(String id, String issuer, String subject) {
+    public static String createWebToken(int id, String issuer, String subject) {
 	// The JWT signature algorithm we will be using to sign the token
 	SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -48,8 +48,8 @@ public class JWTToken {
 	Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 	// Let's set the JWT Claims
-	JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuer)
-		.signWith(signatureAlgorithm, signingKey);
+	JwtBuilder builder = Jwts.builder().setId(String.valueOf(id)).setIssuedAt(now).setSubject(subject)
+		.setIssuer(issuer).signWith(signatureAlgorithm, signingKey);
 
 	// if it has been specified, let's add the expiration
 
