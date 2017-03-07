@@ -9,13 +9,9 @@ public class UserTransformer {
 
     public static void toUserTagRelations(ArrayList<UserTagRelation> relations, UserTagListDTO userTagDTO, String id) {
 
-	/*
-	 * userTagDTO.tags.stream() .map((tag) -> new
-	 * UserTagRelation(userTagDTO.user.id, tag)) .map(relations::add);
-	 */
-	for (String tag : userTagDTO.tags) {
-	    relations.add(new UserTagRelation(id, tag));
-	}
+		for (String tag : userTagDTO.tags) {
+		    relations.add(new UserTagRelation(id, tag));
+		}
     }
 
 }

@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import com.dennisjonsson.tm.client.RequestDTO;
 import com.dennisjonsson.tm.client.RequestListDTO;
+import com.dennisjonsson.tm.entity.EligibleRequestsResult;
 import com.dennisjonsson.tm.entity.Request;
 import com.dennisjonsson.tm.entity.RequestTagRelation;
-import com.dennisjonsson.tm.entity.UserRequestResult;
+import com.dennisjonsson.tm.entity.RequestResult;
 
 public class RequestTransformer {
 
@@ -49,17 +50,30 @@ public class RequestTransformer {
 	return listDTO;
     }
 
-    public static RequestDTO toRequestsDTO(UserRequestResult obj) {
-	RequestDTO dto = new RequestDTO();
-	dto.id = obj.getUu_id();
-	dto.content = obj.getContent();
-	dto.date = obj.getDate();
-	dto.tags = new ArrayList<String>();
-	for (String tag : obj.getTags().split(",")) {
-	    dto.tags.add(tag);
-	}
-
-	return dto;
+    public static RequestDTO toRequestsDTO(RequestResult obj) {
+		RequestDTO dto = new RequestDTO();
+		dto.id = obj.getUu_id();
+		dto.content = obj.getContent();
+		dto.date = obj.getDate();
+		dto.tags = new ArrayList<String>();
+		for (String tag : obj.getTags().split(",")) {
+		    dto.tags.add(tag);
+		}
+	
+		return dto;
+    }
+    
+    public static RequestDTO toRequestsDTO(EligibleRequestsResult obj) {
+		RequestDTO dto = new RequestDTO();
+		dto.id = obj.getUu_id();
+		dto.content = obj.getContent();
+		dto.date = obj.getDate();
+		dto.tags = new ArrayList<String>();
+		for (String tag : obj.getTags().split(",")) {
+		    dto.tags.add(tag);
+		}
+	
+		return dto;
     }
 
 }

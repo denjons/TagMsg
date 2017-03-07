@@ -20,7 +20,6 @@ public class TagListDTO {
 	public ArrayList<String> tags;
 	
 	public String startDate;
-	public String endDate;
 	
 	public TagListDTO(){
 		
@@ -32,13 +31,12 @@ public class TagListDTO {
 		this.tags = tags;
 	}
 
-	public TagListDTO(int limit, int offset, ArrayList<String> tags, String startDate, String endDate) {
+	public TagListDTO(int limit, int offset, ArrayList<String> tags, String startDate) {
 		super();
 		this.limit = limit;
 		this.offset = offset;
 		this.tags = tags;
 		this.startDate = startDate;
-		this.endDate = endDate;
 	}
 	
 	

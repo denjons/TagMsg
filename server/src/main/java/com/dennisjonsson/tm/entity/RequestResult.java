@@ -2,29 +2,31 @@ package com.dennisjonsson.tm.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedStoredProcedureQuery;
 
-@NamedStoredProcedureQuery(name = "getUserRequests", procedureName = "GET_USER_REQUESTS", resultClasses = {
-	UserRequestResult.class })
+
 @Entity
-public class UserRequestResult {
+public class RequestResult {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    protected int id;
 
     @Column(name = "uu_id")
-    private String uu_id;
+    protected String uu_id;
 
     @Column(name = "content")
-    private String content;
+    protected String content;
 
     @Column(name = "tags")
-    private String tags;
+    protected String tags;
 
     @Column(name = "date")
-    private String date;
+    protected String date;
 
     public int getId() {
 	return id;

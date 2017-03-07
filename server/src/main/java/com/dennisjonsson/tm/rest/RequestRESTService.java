@@ -89,17 +89,19 @@ public class RequestRESTService {
     @JWTTokenAutorization
     @Path("/getEligibleRequestsForUser")
     @Produces(MediaType.APPLICATION_JSON)
-    public RequestListDTO postGetEligibleRequestsForUser(@HeaderParam("AUTHORIZED-ID") String userId,
-	    @DefaultValue("10") @QueryParam("limit") int limit, @DefaultValue("0") @QueryParam("offset") int offset,
+    public Response postGetEligibleRequestsForUser(@HeaderParam("AUTHORIZED-ID") String userId,
+	    @DefaultValue("10") @QueryParam("limit") int limit, 
+	    @DefaultValue("0") @QueryParam("offset") int offset,
 	    @DefaultValue("null") @QueryParam("from") String from,
 	    @DefaultValue("null") @QueryParam("before") String before) {
 	RequestUpdateDTO requestUpdateDTO = new RequestUpdateDTO(limit, offset, from, before);
 	try {
 	    validator.validateRequestsUpdate(requestUpdateDTO);
 
-	    RequestListDTO dto = RequestTransformer
-		    .toRequestListDTO(requestService.getEligibleRequestsForUser(requestUpdateDTO));
-	    return dto;
+	    ArrayList<RequestDTO> list 
+	    	= requestService.getEligibleRequestsForUser(requestUpdateDTO, Integer.parseInt(userId));
+	    Response.ResponseBuilder builder = Response.ok(list);
+	    return builder.build();
 	} catch (ConstraintViolationException e) {
 	    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
 	    throw new WebApplicationException(builder.build());
@@ -111,26 +113,32 @@ public class RequestRESTService {
     }
 
     @POST
+    @JWTTokenAutorization
     @Path("/getRequestsFromTags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public RequestListDTO postGetRequestsFromTags(TagListDTO tagsDTO) {
-
-	try {
-	    validator.validateTags(tagsDTO);
-	    ArrayList<Request> requests = requestService.getRequestsFromTags(tagsDTO.tags, tagsDTO.limit,
-		    tagsDTO.offset, tagsDTO.endDate, tagsDTO.startDate);
-
-	    return RequestTransformer.toRequestListDTO(requests);
-	} catch (ConstraintViolationException e) {
-	    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
-	    throw new WebApplicationException(builder.build());
-
-	} catch (CSTServiceException e) {
-	    e.printStackTrace();
-	    throw new WebApplicationException(
-		    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
-	}
+    public Response postGetRequestsFromTags(@HeaderParam("AUTHORIZED-ID") String userId, 
+    		@DefaultValue("10") @QueryParam("limit") int limit, 
+    		@DefaultValue("0") @QueryParam("offset") int offset,
+    		@DefaultValue("null") @QueryParam("from") String from,
+    	    ArrayList<String> tags) {
+    	TagListDTO tagsDTO = new TagListDTO(limit, offset, tags, from);
+    	
+		try {
+		    validator.validateTags(tagsDTO);
+		    ArrayList<RequestDTO> list = requestService.getRequestsFromTags(tagsDTO);
+		    Response.ResponseBuilder builder = Response.ok(list);
+		    return builder.build();
+		    
+		} catch (ConstraintViolationException e) {
+		    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
+		    throw new WebApplicationException(builder.build());
+	
+		} catch (CSTServiceException e) {
+		    e.printStackTrace();
+		    throw new WebApplicationException(
+			    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
+		}
 
     }
 

@@ -6,9 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class ResponseUpdateDTO {
 	
-	@NotNull
-	public UserDTO user;
-	
+
 	@NotNull
 	@Max(40)
 	public String request;
@@ -24,9 +22,8 @@ public class ResponseUpdateDTO {
 	
 	public String beforeResponse;
 
-	public ResponseUpdateDTO(UserDTO user, String request, int limit, int offset, String fromResponse, String beforeResponse) {
+	public ResponseUpdateDTO( String request, int limit, int offset, String fromResponse, String beforeResponse) {
 		super();
-		this.user = user;
 		this.request = request;
 		this.limit = limit;
 		this.offset = offset;
