@@ -1,7 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Http } from '@angular/http';
-import { contentHeaders } from '../common/headers';
 
 
 @Component({

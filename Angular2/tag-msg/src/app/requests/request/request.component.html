@@ -1,0 +1,11 @@
+<article>
+    <a [routerLink]="['/requests']" href="">go back</a>
+    <div>
+        <h2>{{request.content}}</h2>
+        <ul>
+           <li *ngFor="let tag of request.tags">{{tag}}</li>
+        </ul>
+        <p>{{request.date}}</p>    
+    </div>
+    <div></div>
+</article>

@@ -2,12 +2,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
+import { AppRoutingModule } from './app-routing.module';
 
-
+// components
 import { AppComponent } from './app.component';
-import { AuthGuard } from './common/auth.guard';
-import { RegisterComponent } from './user/register.component'; 
+import { RegisterComponent } from './users/register.component'; 
+
+// services
+import { UserService } from './users/shared/user.service';
+
+// extensions
+import './rxjs-extensions';
 
 @NgModule({
   declarations: [
@@ -16,9 +21,10 @@ import { RegisterComponent } from './user/register.component';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    AppRoutingModule,
   ],
-  providers: [AuthGuard],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
