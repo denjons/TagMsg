@@ -8,6 +8,5 @@ import { Request } from '../../../core/requests/request.model';
 })
 export class RequestButtonComponent{
     @Input() request: Request;
-    @Input() module: String;
     constructor(){}
 }

@@ -1,6 +1,6 @@
 <div class="request-button">
     <button>
-            <a [routerLink]="['/requests', request.id]" href="">{{request.content}}</a>
+            <a [routerLink]="['/outbox', request.id]" href="">{{request.content}}</a>
             <ul>
                 <li *ngFor="let tag of request.tags">{{tag}}</li>
             </ul>
