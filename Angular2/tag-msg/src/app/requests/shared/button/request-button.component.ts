@@ -8,5 +8,6 @@ import { Request } from '../../shared/request.model';
 })
 export class RequestButtonComponent{
     @Input() request: Request;
+    @Input() module: String;
     constructor(){}
 }

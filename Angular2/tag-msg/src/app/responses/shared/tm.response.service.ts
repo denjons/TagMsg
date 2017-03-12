@@ -14,15 +14,20 @@ export class TMResponseService{
     constructor(private http: Http){}
 
     getResponses(requestId: any){
-        TMHeader.headers.set(TMHeader.ATYHORIZATION,
-      "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMiIsImlhdCI6MTQ4OTE0NTI5MSwic3ViIjoiL3VzZXIvY3JlYXRldXNlciIsImlzcyI6IlRNX1dJTERGTFlfNyJ9.U4Ysdhw07-pXvQlWLkD-qDs_NtyxDfmL3zlUeILRg-0");
-     
-        return this.http.get(TMURLS.getResponses(10, 0), {headers : TMHeader.headers})
+        TMHeader.headers.set(TMHeader.ATYHORIZATION,"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNDg5MjIzNzkyLCJzdWIiOiIvdXNlci9jcmVhdGV1c2VyIiwiaXNzIjoiVE1fV0lMREZMWV83In0.wW9YYV3WexzD7vFcaDBZLZlqt5KrcuyEfvgHi0KB4jA");
+        
+        return this.http.get(TMURLS.getResponses(10, 0, requestId), {headers : TMHeader.headers})
             .map((response: Response) => <TMResponse[]>response.json().responses)
             .do(responses => {this.responses = responses; 
             console.log(responses)})
             .catch(error => this.handleError(error));
     }
+    
+
+    getResponse(respId: any){
+       return this.responses.find(response => response.id == respId);
+    }
+
 
     private handleError(error: Response) {
         console.error(error);

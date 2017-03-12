@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { TmResponsetListComponent } from './response-list/response-list.component';
+import { ResponsetListComponent } from './response-list/response-list.component';
 import { ResponseComponent } from './response/response.component';
 
 import { TMResponseService } from './shared/tm.response.service';
@@ -14,7 +14,12 @@ import { TMResponseService } from './shared/tm.response.service';
         CommonModule,
         FormsModule
     ],
-    declarations: [ResponseComponent, TmResponsetListComponent],
+    exports:[
+        ResponsetListComponent
+    ],
+    declarations: [ResponseComponent, ResponsetListComponent],
     providers: [TMResponseService]
 })
-export class ResponsesModule{}
+export class ResponsesModule{
+
+}

@@ -6,13 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { ResponsesModule } from '../responses/responses.module';
 
 // routing
-import { RequestsRoutingModule, routableComponents } from './requests-routing.module';
+import { OutboxRoutingModule, routableComponents } from './outbox-routig.module';
 
 // components
-import { RequestButtonComponent } from './shared/button/request-button.component';
+import { RequestButtonComponent } from '../requests/shared/button/request-button.component';
 
 // services
-import { RequestService } from './shared/request.service';
+import { RequestService } from '../requests/shared/request.service'
 
 // extensions
 import '../core/rxjs-extensions';
@@ -25,8 +25,8 @@ import '../core/rxjs-extensions';
     CommonModule,
     FormsModule,
     ResponsesModule,
-    RequestsRoutingModule
+    OutboxRoutingModule
   ],
   providers: [RequestService]
 })
-export class RequestsModule { }
+export class OutboxModule { }

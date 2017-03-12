@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { TMURLS } from '../../core/urls';
 import { TMHeader } from '../../core/headers';
 
-import '../../common/rxjs-extensions';
+import '../../core/rxjs-extensions';
 
 @Injectable()
 export class RequestService{
@@ -18,7 +18,7 @@ export class RequestService{
 
     getEligibleRequests(){
       TMHeader.headers.set(TMHeader.ATYHORIZATION,
-      "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMiIsImlhdCI6MTQ4OTE0NTI5MSwic3ViIjoiL3VzZXIvY3JlYXRldXNlciIsImlzcyI6IlRNX1dJTERGTFlfNyJ9.U4Ysdhw07-pXvQlWLkD-qDs_NtyxDfmL3zlUeILRg-0");
+      "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNDg5MjIzNzkyLCJzdWIiOiIvdXNlci9jcmVhdGV1c2VyIiwiaXNzIjoiVE1fV0lMREZMWV83In0.wW9YYV3WexzD7vFcaDBZLZlqt5KrcuyEfvgHi0KB4jA");
      // localStorage.getItem(web-token)
 
       return this.http
@@ -34,6 +34,13 @@ export class RequestService{
         return this.requests.find(request => request.id == reqid);
         
     }
+
+    getRequestsForUser(){
+        return this.http.get(TMURLS.getRequestsForUser(10,0),{ headers: TMHeader.headers })
+            .map((response: Response) => <Request[]>response.json().requests)
+            .do(requests => {this.requests = requests; console.log(requests)})
+            .catch(this.handleError);
+        }
 
     private handleError(error: Response) {
         console.error(error);

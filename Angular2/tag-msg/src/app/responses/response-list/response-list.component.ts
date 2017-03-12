@@ -1,23 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TMResponseService } from '../shared/tm.response.service';
 import { TMResponse } from '../shared/tm.response.model';
 
 @Component({
-    selector:"request-list",
-    templateUrl:"./request-list.component.html",
-    styleUrls: ['./request-list.component.css']
+    selector:"response-list",
+    templateUrl:"./response-list.component.html",
+    styleUrls: ['./response-list.component.css']
 })
-export class TmResponsetListComponent implements OnInit{
+export class ResponsetListComponent implements OnInit{
     
     responses: TMResponse[];
     errorMessage: string;
-    request : String;
+    @Input() requestId : String;
 
     constructor(private responseService: TMResponseService){}
 
     ngOnInit(){
         console.log("initializing");
-        this.responseService.getResponses(this.request).subscribe(
+        this.responseService.getResponses(this.requestId).subscribe(
             responses => this.responses = responses,
             error => this.errorMessage = <any>error
         );

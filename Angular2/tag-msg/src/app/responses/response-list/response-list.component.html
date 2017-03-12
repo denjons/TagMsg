@@ -1,6 +1,7 @@
 <div>
     <ul>
-        <li *ngFor="response in responses">
+        <li *ngFor="let response of responses">
+            <tm-response [response]="response"></tm-response>
         </li>
     </ul>
 </div>
