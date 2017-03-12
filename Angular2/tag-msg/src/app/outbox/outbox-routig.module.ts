@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { OutboxComponent } from './outbox.component';
 import { OutboxListComponent } from './outbox-list/outbox-list.component';
-import { RequestComponent } from '../requests/request/request.component';
 
 
 
@@ -16,15 +15,6 @@ const routes: Routes = [
       {
         path: '',
         component: OutboxListComponent,
-      },
-
-      {
-        path: ':id',
-        component: RequestComponent,
-        //canDeactivate: [CanDeactivateGuard],
-        //resolve: {
-        // vehicle: VehicleResolver
-        // }
       }
     ]
   },

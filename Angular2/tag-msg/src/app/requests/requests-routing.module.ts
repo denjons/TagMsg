@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { RequestsComponent } from './requests.component';
 import { RequestListComponent } from './request-list/request-list.component';
-import { RequestComponent } from './request/request.component';
+import { InboxRequestComponent } from './request/inbox.component';
 
 
 const routes: Routes = [
@@ -18,7 +18,7 @@ const routes: Routes = [
       }
       ,{
         path: ':id',
-        component: RequestComponent,
+        component: InboxRequestComponent,
         //canDeactivate: [CanDeactivateGuard],
         //resolve: {
         // vehicle: VehicleResolver
@@ -38,6 +38,6 @@ export class RequestsRoutingModule { }
 
 export const routableComponents = [
   RequestsComponent,
-  RequestComponent,
+  InboxRequestComponent,
   RequestListComponent
 ];

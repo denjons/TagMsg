@@ -4,11 +4,11 @@ import { RequestService } from '../../core/requests/request.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-    selector:"request",
-    templateUrl:"./request.component.html",
-    styleUrls: ['./request.component.css']
+    selector:"request-inbox",
+    templateUrl:"./inbox.component.html",
+    styleUrls: ['./inbox.component.css']
 })
-export class RequestComponent implements OnInit{
+export class InboxRequestComponent implements OnInit{
     request: Request;
     id: any;
 

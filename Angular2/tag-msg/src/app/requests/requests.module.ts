@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // modules
-import { ResponsesModule } from '../responses/responses.module';
+import { RequestModule } from '../core/requests/request.module';
 
 // routing
 import { RequestsRoutingModule, routableComponents } from './requests-routing.module';
@@ -24,7 +24,7 @@ import '../core/rxjs-extensions';
   imports: [
     CommonModule,
     FormsModule,
-    ResponsesModule,
+    RequestModule,
     RequestsRoutingModule
   ],
   providers: [RequestService]
