@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RequestService } from '../../requests/shared/request.service';
-import { Request } from '../../requests/shared/request.model';
+import { RequestService } from '../../core/requests/request.service';
+import { Request } from '../../core/requests/request.model';
 
 @Component({
     selector:"outbox-list",

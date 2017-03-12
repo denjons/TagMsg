@@ -12,7 +12,7 @@ import { OutboxRoutingModule, routableComponents } from './outbox-routig.module'
 import { RequestButtonComponent } from '../requests/shared/button/request-button.component';
 
 // services
-import { RequestService } from '../requests/shared/request.service'
+import { RequestService } from '../core/requests/request.service'
 
 // extensions
 import '../core/rxjs-extensions';

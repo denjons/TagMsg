@@ -12,7 +12,7 @@ import { RequestsRoutingModule, routableComponents } from './requests-routing.mo
 import { RequestButtonComponent } from './shared/button/request-button.component';
 
 // services
-import { RequestService } from './shared/request.service';
+import { RequestService } from '../core/requests/request.service';
 
 // extensions
 import '../core/rxjs-extensions';

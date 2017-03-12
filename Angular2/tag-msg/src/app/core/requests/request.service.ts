@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Request } from '../shared/request.model';
+import { Request } from './request.model';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable'; 
-import { TMURLS } from '../../core/urls';
-import { TMHeader } from '../../core/headers';
+import { TMURLS } from '../urls';
+import { TMHeader } from '../headers';
 
 import '../../core/rxjs-extensions';
 

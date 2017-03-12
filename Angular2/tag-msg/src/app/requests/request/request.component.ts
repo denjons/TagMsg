@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Request } from '../shared/request.model'; 
-import { RequestService } from '../shared/request.service';
+import { Request } from '../../core/requests/request.model'; 
+import { RequestService } from '../../core/requests/request.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { RequestService } from './shared/request.service';
+import { RequestService } from '../core/requests/request.service';
 
 @Component({
     template:"<router-outlet></router-outlet>",
