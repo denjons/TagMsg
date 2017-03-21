@@ -4,7 +4,7 @@ import { RequestService } from '../../core/requests/request.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-    selector:"request-outbox",
+    selector:"outbox-request",
     templateUrl:"./outbox.component.html",
     styleUrls: ['./outbox.component.css']
 })

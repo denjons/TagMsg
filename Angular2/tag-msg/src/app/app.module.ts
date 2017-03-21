@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
+import { MSGWidgetModule } from './core/msg/msg-widget.module';
 
 // components
 import { AppComponent } from './app.component';
@@ -23,6 +24,7 @@ import './rxjs-extensions';
     FormsModule,
     HttpModule,
     AppRoutingModule,
+    MSGWidgetModule
   ],
   providers: [],
   bootstrap: [AppComponent]

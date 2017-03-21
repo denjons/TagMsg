@@ -1,0 +1,78 @@
+/** navigation*/
+
+#navigation{
+    background-color: #474646;
+    height:65px;
+}
+
+#navigation .loggo{
+    height: inherit;
+    float:left;
+    width:100px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+#navigation .loggo h1{
+    margin: 0;
+    padding: 0;
+    font-size: 25px;
+    color: #a4f4cb;
+    height: inherit;
+}
+
+
+#navigation ul {
+    height:inherit;
+    width:300px;
+    padding: 0;
+    margin:0;
+    float:left;
+        
+}
+
+#navigation li{
+    height: inherit;
+    padding: 0px 5px 0px 5px;
+    
+}
+
+#navigation a{
+    width:95px;
+    height: inherit;
+    font-size: 20px;
+    color:#f2f2f2;
+    text-align: center;
+    align-content: center;
+    display:  block;
+}
+
+#navigation a:hover{
+    background-color:#8eedc2; /* For browsers that do not support gradients */
+    color: #474646;
+    cursor: pointer;
+}
+
+#navigation .new-msg-box{
+    float:right;
+     width: 50px;
+    height: 50px;
+}
+
+#navigation .new-msg-box a{
+    color:#f2f2f2;;
+    font-size: 30;
+}
+
+
+/*
+#main div{
+    -webkit-column-count:           3;    
+    column-count:                   3;
+    -webkit-column-gap:             0;    
+    column-gap:                     0;
+}
+#main > div:nth-child(2){
+    width:1000px;
+}*/

@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { RequestService } from '../../core/requests/request.service';
+import { Component, OnInit, Input } from '@angular/core';
 import { Request } from '../../core/requests/request.model';
 
 @Component({
@@ -7,21 +6,12 @@ import { Request } from '../../core/requests/request.model';
     templateUrl:"./outbox-list.component.html",
     styleUrls: ['./outbox-list.component.css']
 })
-export class OutboxListComponent implements OnInit{
+export class OutboxListComponent{
     
-    requests: Request[];
+    @Input() requests: Request[];
     errorMessage: string;
 
-    constructor(private requestService: RequestService){
+    constructor(){
     }
-
-    ngOnInit(){
-        console.log("initializing");
-        this.requestService.getRequestsForUser().subscribe(
-            requests => this.requests = requests,
-            error => this.errorMessage = <any>error
-        );
-    }
-
 
 }

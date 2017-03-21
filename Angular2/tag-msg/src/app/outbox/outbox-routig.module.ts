@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 
 import { Routes, RouterModule } from '@angular/router';
 
+import { OutboxRoutingComponent } from './outbox-routing.component';
 import { OutboxComponent } from './outbox.component';
-import { OutboxListComponent } from './outbox-list/outbox-list.component';
 import { OutboxRequestComponent } from './request/outbox.component';
 
 
@@ -11,11 +11,11 @@ import { OutboxRequestComponent } from './request/outbox.component';
 const routes: Routes = [
   {
     path: '',
-    component: OutboxComponent,
+    component: OutboxRoutingComponent,
     children: [
       {
         path: '',
-        component: OutboxListComponent,
+        component: OutboxComponent,
       }
       ,{
         path: ':id',
@@ -36,5 +36,5 @@ const routes: Routes = [
 export class OutboxRoutingModule { }
 
 export const routableComponents = [
-  OutboxListComponent, OutboxComponent, OutboxRequestComponent
+  OutboxComponent, OutboxRoutingComponent, OutboxRequestComponent
 ];

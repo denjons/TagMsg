@@ -1,9 +1,14 @@
-<div class="request-button">
-    <button>
-            <a [routerLink]="['/inbox', request.id]" href="">{{request.content}}</a>
-            <ul>
-                <li *ngFor="let tag of request.tags">{{tag}}</li>
-            </ul>
-            <p>{{request.date}}</p>
-    </button>
+<div class="tm-item request-list-item">
+    <article>
+        <a [routerLink]="['/inbox', request.id]" href="">{{request.content}}</a>
+        <div>
+            <div class="tag" *ngFor="let tag of request.tags">{{tag}}</div>
+        </div>
+
+        <button>
+        </button>
+     </article>
+     <div class="item-foot">
+        <span>{{request.date}}</span>
+    </div>
 </div>

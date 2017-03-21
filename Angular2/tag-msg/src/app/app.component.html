@@ -1,13 +1,38 @@
 
 <header>
-    <nav>
-        <ul>
-            <li><a [routerLink]="['/inbox']" href="">inbox</a></li>
-            <li><a [routerLink]="['/outbox']" href="">outbox</a></li>
-        </ul>
+    <nav id="navigation" class="tm-flex-box tm-flex-main">
+        <div></div>
+        <div class="tm-main-box tm-flex-box">
+            <div class="loggo">
+                   <h1>TAG
+                        <br>
+                        -MSG
+                    </h1>
+            </div>
+            <ul class="tm-flex-box tm-flex-nav-start">
+                <li>
+                    <a [routerLink]="['/inbox']" href=""><span>inbox</span></a>
+                </li>
+                <li>
+                    <a [routerLink]="['/outbox']" href="">outbox</a>
+                </li>
+            </ul>
+            <!--<div class="new-msg-box"><a [routerLink]="['/msg']" href="">new msg</a></div>
+            -->
+        </div>
+        <div></div>
     </nav>
 </header>
-<main>
-    <router-outlet></router-outlet>
+<main class="tm-flex-box tm-flex-main">
+    <div></div>
+    <div id="content" class="tm-main-box">
+        <msg-widget></msg-widget>
+        <div id="router">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+    <div></div>
 </main>
+<footer id="footer">
+</footer>
 
