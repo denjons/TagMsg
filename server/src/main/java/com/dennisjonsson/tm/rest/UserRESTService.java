@@ -35,7 +35,7 @@ public class UserRESTService {
     @Inject
     UserService UserCreationService;
 
-    @GET
+    @POST
     /*
      * @ApiOperation(value = "Creates user", notes =
      * "Multiple status values can be provided with comma separated strings",
@@ -50,7 +50,7 @@ public class UserRESTService {
 	try {
 	    User user = UserCreationService.createUser();
 
-	    Response.ResponseBuilder builder = Response.ok().header(HttpHeaders.AUTHORIZATION,
+	    Response.ResponseBuilder builder = Response.noContent().header(HttpHeaders.AUTHORIZATION,
 		    JWTToken.createWebToken(user.getId(), TMAppConstants.SERVER_APP_KEY, "/user/createuser"));
 	    return builder.build();
 

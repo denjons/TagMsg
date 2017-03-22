@@ -73,7 +73,9 @@ public class RequestRESTService {
 	try {
 	    validator.validateRequestsUpdate(requestUpdateDTO);
 	    ArrayList<RequestDTO> dto = requestService.getRequests(requestUpdateDTO, Integer.parseInt(userId));
-	    Response.ResponseBuilder builder = Response.ok(dto);
+	    RequestListDTO reqListDTO = new RequestListDTO();
+	    reqListDTO.requests = dto;
+	    Response.ResponseBuilder builder = Response.ok(reqListDTO);
 	    return builder.build();
 	} catch (ConstraintViolationException e) {
 	    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
@@ -90,17 +92,18 @@ public class RequestRESTService {
     @Path("/getEligibleRequestsForUser")
     @Produces(MediaType.APPLICATION_JSON)
     public Response postGetEligibleRequestsForUser(@HeaderParam("AUTHORIZED-ID") String userId,
-	    @DefaultValue("10") @QueryParam("limit") int limit, 
-	    @DefaultValue("0") @QueryParam("offset") int offset,
+	    @DefaultValue("10") @QueryParam("limit") int limit, @DefaultValue("0") @QueryParam("offset") int offset,
 	    @DefaultValue("null") @QueryParam("from") String from,
 	    @DefaultValue("null") @QueryParam("before") String before) {
 	RequestUpdateDTO requestUpdateDTO = new RequestUpdateDTO(limit, offset, from, before);
 	try {
 	    validator.validateRequestsUpdate(requestUpdateDTO);
 
-	    ArrayList<RequestDTO> list 
-	    	= requestService.getEligibleRequestsForUser(requestUpdateDTO, Integer.parseInt(userId));
-	    Response.ResponseBuilder builder = Response.ok(list);
+	    ArrayList<RequestDTO> list = requestService.getEligibleRequestsForUser(requestUpdateDTO,
+		    Integer.parseInt(userId));
+	    RequestListDTO reqListDTO = new RequestListDTO();
+	    reqListDTO.requests = list;
+	    Response.ResponseBuilder builder = Response.ok(reqListDTO);
 	    return builder.build();
 	} catch (ConstraintViolationException e) {
 	    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
@@ -117,28 +120,26 @@ public class RequestRESTService {
     @Path("/getRequestsFromTags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response postGetRequestsFromTags(@HeaderParam("AUTHORIZED-ID") String userId, 
-    		@DefaultValue("10") @QueryParam("limit") int limit, 
-    		@DefaultValue("0") @QueryParam("offset") int offset,
-    		@DefaultValue("null") @QueryParam("from") String from,
-    	    ArrayList<String> tags) {
-    	TagListDTO tagsDTO = new TagListDTO(limit, offset, tags, from);
-    	
-		try {
-		    validator.validateTags(tagsDTO);
-		    ArrayList<RequestDTO> list = requestService.getRequestsFromTags(tagsDTO);
-		    Response.ResponseBuilder builder = Response.ok(list);
-		    return builder.build();
-		    
-		} catch (ConstraintViolationException e) {
-		    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
-		    throw new WebApplicationException(builder.build());
-	
-		} catch (CSTServiceException e) {
-		    e.printStackTrace();
-		    throw new WebApplicationException(
-			    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
-		}
+    public Response postGetRequestsFromTags(@HeaderParam("AUTHORIZED-ID") String userId,
+	    @DefaultValue("10") @QueryParam("limit") int limit, @DefaultValue("0") @QueryParam("offset") int offset,
+	    @DefaultValue("null") @QueryParam("from") String from, ArrayList<String> tags) {
+	TagListDTO tagsDTO = new TagListDTO(limit, offset, tags, from);
+
+	try {
+	    validator.validateTags(tagsDTO);
+	    ArrayList<RequestDTO> list = requestService.getRequestsFromTags(tagsDTO);
+	    Response.ResponseBuilder builder = Response.ok(list);
+	    return builder.build();
+
+	} catch (ConstraintViolationException e) {
+	    Response.ResponseBuilder builder = validator.createViolationResponse(e.getConstraintViolations());
+	    throw new WebApplicationException(builder.build());
+
+	} catch (CSTServiceException e) {
+	    e.printStackTrace();
+	    throw new WebApplicationException(
+		    Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
+	}
 
     }
 

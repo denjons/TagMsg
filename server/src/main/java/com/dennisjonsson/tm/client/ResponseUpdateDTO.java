@@ -5,38 +5,32 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class ResponseUpdateDTO {
-	
 
-	@NotNull
-	@Max(40)
-	public String request;
-	
-	@Min(1)
-	@Max(50)
-	public int limit;
-	
-	@Min(0)
-	public int offset;
-	
-	public String fromResponse;
-	
-	public String beforeResponse;
+    @NotNull
+    public String request;
 
-	public ResponseUpdateDTO( String request, int limit, int offset, String fromResponse, String beforeResponse) {
-		super();
-		this.request = request;
-		this.limit = limit;
-		this.offset = offset;
-		this.fromResponse = fromResponse;
-		this.beforeResponse = beforeResponse;
-	}
+    @Min(1)
+    @Max(50)
+    public int limit;
 
-	public ResponseUpdateDTO() {
-		super();
-	}
-	
-	
-	
-	
+    @Min(0)
+    public int offset;
+
+    public String fromResponse;
+
+    public String beforeResponse;
+
+    public ResponseUpdateDTO(String request, int limit, int offset, String fromResponse, String beforeResponse) {
+	super();
+	this.request = request;
+	this.limit = limit;
+	this.offset = offset;
+	this.fromResponse = fromResponse;
+	this.beforeResponse = beforeResponse;
+    }
+
+    public ResponseUpdateDTO() {
+	super();
+    }
 
 }
